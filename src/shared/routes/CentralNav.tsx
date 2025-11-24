@@ -8,6 +8,9 @@ import BookAnEvent from "../../pages/book-event/BookAnEvent"
 import ContactUs from "../../pages/contact-us/ContactUs"
 import Cart from "../../pages/cart/Cart"
 import Orders from "../../pages/dashboard/orders/Orders"
+import Profile from "../../pages/dashboard/profile/Profile"
+import OrderDetails from "../../pages/dashboard/orders/OrderDetails"
+import Dashboard from "../../pages/dashboard/dashboard/Dashboard"
 
 const CentralNav = () => {
   return (
@@ -21,6 +24,9 @@ const CentralNav = () => {
         <Route path={routes.contact} element={<ContactUs />} />
         <Route path={routes.cart} element={<Cart />} />
         <Route path={routes.orders} element={<Orders />} />
+        <Route path={routes.ordersDetails} element={<OrderDetails />} />
+        <Route path={routes.profile} element={<Profile />} />
+        <Route path={routes.dashboard} element={<Dashboard />} />
       </Routes>
     </BrowserRouter>
   )

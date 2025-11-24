@@ -57,8 +57,19 @@ import shoppingCartWhite from "../../assets/icons/shopping-cart-white.svg"
 import successBlack from "../../assets/icons/success.svg";
 import userSquare from "../../assets/icons/user-square.svg";
 import penBlue from "../../assets/icons/pen.svg";
+import crown from "../../assets/icons/crown.svg"
+import wineNdGleass from "../../assets/icons/wine-and-glass.svg"
+import calendar from "../../assets/icons/video-time.svg"
+import locationRed from "../../assets/icons/location-red.svg"
+import percentageSymbol from "../../assets/icons/percentage-symbol.svg"
+
 
 export const ImagesAndIcons = {
+  percentageSymbol: percentageSymbol,
+  crown: crown,
+  wineNdGleass: wineNdGleass,
+  calendar: calendar,
+  locationRed: locationRed,
   penBlue: penBlue,
   userSquare: userSquare,
   successBlack: successBlack,

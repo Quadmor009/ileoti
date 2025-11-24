@@ -6,8 +6,9 @@ export const routes = {
     contact: '/contact-us',
     cart: '/cart',
     checkout: '/checkout',
-    profile: '/profile',
     bookEvent: '/book-an-event',
     orders: '/dashboard/orders',
+    ordersDetails: '/dashboard/orders/:id',
+    profile: '/dashboard/profile',
     dashboard: '/dashboard',
 };

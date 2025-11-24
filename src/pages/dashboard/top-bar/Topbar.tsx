@@ -1,9 +1,20 @@
-import { useState } from "react";
+import { routes } from "../../../shared/routes/routes";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const Topbar = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const { pathname } = location;
+
+  const activeState = (route: string) => {
+    return pathname === route;
+  };
+
   const headerTabs = [
     {
       key: "Dashboard",
+      routes: routes.dashboard,
       img: (active: boolean) => (
         <svg
           width="16"
@@ -14,18 +25,18 @@ const Topbar = () => {
         >
           <path
             d="M10.0004 15.1659L6.00042 15.1659C5.12042 15.1659 4.38709 15.0792 3.76709 14.8925C3.54042 14.8259 3.39376 14.6059 3.40709 14.3725C3.57376 12.3792 5.59376 10.8125 8.00042 10.8125C10.4071 10.8125 12.4204 12.3725 12.5938 14.3725C12.6138 14.6125 12.4671 14.8259 12.2338 14.8925C11.6138 15.0792 10.8804 15.1659 10.0004 15.1659ZM4.48042 14.0392C4.92042 14.1259 5.42042 14.1659 6.00042 14.1659L10.0004 14.1659C10.5804 14.1659 11.0804 14.1259 11.5204 14.0392C11.1671 12.7592 9.70709 11.8125 8.00042 11.8125C6.29376 11.8125 4.83376 12.7592 4.48042 14.0392Z"
-            fill={active ? "#A44D61" :"#707070"}
+            fill={active ? "#A44D61" : "#707070"}
           />
           <path
             d="M9.9987 1.33203L5.9987 1.33203C2.66536 1.33203 1.33203 2.66536 1.33203 5.9987L1.33203 9.9987C1.33203 12.5187 2.09203 13.8987 3.90536 14.412C4.05203 12.6787 5.83203 11.312 7.9987 11.312C10.1654 11.312 11.9454 12.6787 12.092 14.412C13.9054 13.8987 14.6654 12.5187 14.6654 9.9987L14.6654 5.9987C14.6654 2.66536 13.332 1.33203 9.9987 1.33203ZM7.9987 9.44535C6.6787 9.44535 5.61203 8.37204 5.61203 7.05204C5.61203 5.73204 6.6787 4.66536 7.9987 4.66536C9.3187 4.66536 10.3854 5.73204 10.3854 7.05204C10.3854 8.37204 9.3187 9.44535 7.9987 9.44535Z"
-            stroke={active ? "#A44D61" :"#707070"}
+            stroke={active ? "#A44D61" : "#707070"}
             stroke-width="1.0483"
             stroke-linecap="round"
             stroke-linejoin="round"
           />
           <path
             d="M7.99995 9.94405C6.40662 9.94405 5.11328 8.64407 5.11328 7.05074C5.11328 5.45741 6.40662 4.16406 7.99995 4.16406C9.59328 4.16406 10.8866 5.45741 10.8866 7.05074C10.8866 8.64407 9.59328 9.94405 7.99995 9.94405ZM7.99995 5.16406C6.95995 5.16406 6.11328 6.01074 6.11328 7.05074C6.11328 8.09741 6.95995 8.94405 7.99995 8.94405C9.03995 8.94405 9.88662 8.09741 9.88662 7.05074C9.88662 6.01074 9.03995 5.16406 7.99995 5.16406Z"
-            fill={active ? "#A44D61" :"#707070"}
+            fill={active ? "#A44D61" : "#707070"}
           />
         </svg>
       ),
@@ -33,6 +44,7 @@ const Topbar = () => {
     },
     {
       key: "Orders",
+      routes: routes.orders,
       img: (active: boolean) => (
         <svg
           width="16"
@@ -65,6 +77,7 @@ const Topbar = () => {
     },
     {
       key: "Profile",
+      routes: routes.profile,
       img: (active: boolean) => (
         <svg
           width="16"
@@ -89,20 +102,19 @@ const Topbar = () => {
     },
   ];
 
-  const [activeTab, setActiveTab] = useState("Dashboard");
   return (
     <div className="w-full flex items-center gap-2 mb-6 p-5 rounded-[48px]">
       {headerTabs.map((tab) => (
         <button
           key={tab.label}
-          onClick={() => setActiveTab(tab.label)}
+          onClick={() => navigate(tab.routes)}
           className={`text-sm font-bold flex items-center gap-1 transition-all duration-300 py-3.5 px-5 rounded-3xl ${
-            activeTab === tab.label
+            activeState(tab.routes)
               ? "bg-[#F5F5F5] text-[#A44D61] "
               : "text-[#707070]"
           }`}
         >
-          {tab.img(tab.label === activeTab)} {tab.label}{" "}
+          {tab.img(activeState(tab.routes))} {tab.label}{" "}
         </button>
       ))}
     </div>
