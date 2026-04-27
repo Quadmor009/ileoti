@@ -1,6 +1,7 @@
 import { Rate } from "antd";
 import { message } from "antd";
 import type { MouseEvent } from "react";
+import { useState } from "react";
 import { ImagesAndIcons } from "../../shared/images-icons/ImagesAndIcons";
 import { useNavigate } from "react-router-dom";
 import { routes } from "../../shared/routes/routes";
@@ -11,7 +12,9 @@ import { useLoginModalStore } from "../../store/login-modal.store";
 import { cartService } from "../../services/cart.service";
 import { useCartStore } from "../../store/cart.store";
 import { getApiErrorMessage } from "../../lib/api-error";
-import axios from "axios";
+import { wishlistService } from "../../services/wishlist.service";
+import GiftBoxModal from "../gift-box-modal/GiftboxModal";
+import PersonalMessageModal from "../gift-box-modal/PersonalMessageModal";
 
 interface ProductCardProps {
   product?: Product;
@@ -22,6 +25,10 @@ const ProductCard = ({ product }: ProductCardProps = {}) => {
   const isAuthed = useAuthStore((s) => Boolean(s.accessToken));
   const requestLogin = useLoginModalStore((s) => s.requestLogin);
   const setCart = useCartStore((s) => s.setCart);
+  const [wishlisted, setWishlisted] = useState(false);
+  const [giftBoxOpen, setGiftBoxOpen] = useState(false);
+  const [personalMessageOpen, setPersonalMessageOpen] = useState(false);
+  const [giftMessage, setGiftMessage] = useState("");
 
   const id = product?.id;
   const name = product?.name ?? "Deanston 12 Year Old";
@@ -50,7 +57,6 @@ const ProductCard = ({ product }: ProductCardProps = {}) => {
 
     if (!isAuthed) {
       requestLogin();
-      void message.warning("Please log in to add items to your cart");
       return;
     }
 
@@ -59,28 +65,33 @@ const ProductCard = ({ product }: ProductCardProps = {}) => {
       setCart(cart);
       void message.success("Added to cart");
     } catch (error) {
-      if (axios.isAxiosError(error) && error.response?.status === 403) {
-        message.open({
-          type: "warning",
-          duration: 6,
-          content: (
-            <span>
-              Please complete your profile with your date of birth to verify
-              your age.{" "}
-              <button
-                type="button"
-                className="underline"
-                onClick={() => navigate(routes.profile)}
-              >
-                Go to profile
-              </button>
-            </span>
-          ),
-        });
-        return;
-      }
       void message.error(getApiErrorMessage(error));
     }
+  };
+
+  const handleWishlistClick = async (e: MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation();
+    if (!id) return;
+    if (!isAuthed) {
+      requestLogin();
+      return;
+    }
+    try {
+      await wishlistService.toggleWishlist(id);
+      setWishlisted((prev) => !prev);
+    } catch (error) {
+      void message.error(getApiErrorMessage(error));
+    }
+  };
+
+  const handleGiftBoxClick = (e: MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation();
+    if (!isAuthed) {
+      requestLogin();
+      return;
+    }
+    if (!id || !product) return;
+    setGiftBoxOpen(true);
   };
 
   return (
@@ -107,9 +118,9 @@ const ProductCard = ({ product }: ProductCardProps = {}) => {
       >
         <div className="p-2 flex items-center justify-end">
           <button
-            onClick={(e) => e.stopPropagation()}
+            onClick={handleWishlistClick}
           >
-            <img src={ImagesAndIcons.lovelyRed} alt="" />
+            <img src={ImagesAndIcons.lovelyRed} alt="" className={wishlisted ? "opacity-100" : "opacity-60"} />
           </button>
         </div>
       </div>
@@ -141,12 +152,34 @@ const ProductCard = ({ product }: ProductCardProps = {}) => {
           Add To Cart
         </button>
         <button
-          onClick={(e) => e.stopPropagation()}
+          onClick={handleGiftBoxClick}
           className="shrink-0 lg:h-12 h-8 w-8 lg:w-12 rounded-full flex justify-center items-center border border-[#80011D]"
         >
           <img src={ImagesAndIcons.giftBox} alt="" />
         </button>
       </div>
+      {product && id ? (
+        <>
+          <GiftBoxModal
+            open={giftBoxOpen}
+            setOpen={setGiftBoxOpen}
+            handleAddPersonalMessage={() => setPersonalMessageOpen(true)}
+            personalMessage={giftMessage}
+            initialProduct={{
+              productId: id,
+              name: product.name,
+              category: product.category?.name ?? "—",
+              price,
+              image,
+            }}
+          />
+          <PersonalMessageModal
+            open={personalMessageOpen}
+            setOpen={setPersonalMessageOpen}
+            onSubmitMessage={(msg) => setGiftMessage(msg)}
+          />
+        </>
+      ) : null}
     </div>
   );
 };

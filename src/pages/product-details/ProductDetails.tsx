@@ -5,11 +5,11 @@ import Button from "../../components/btns/Button";
 import Lovelyred from "../../assets/icons/lovelyred";
 import { useState } from "react";
 import RightHandSideProductDetail from "./component/RightHand";
-import ProductCardCart from "../../components/card/ProductCardCart";
 import ProductCard from "../../components/card/ProductCard";
 import RefundPolicy from "./component/RefundPolicy";
 import ReviewsModal from "./component/ReviewsModal";
 import { useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { productService } from "../../services/product.service";
 import { cartService } from "../../services/cart.service";
@@ -20,8 +20,11 @@ import { effectivePrice, formatDate, formatNGN, primaryImage } from "../../lib/f
 import { ImagesAndIcons } from "../../shared/images-icons/ImagesAndIcons";
 import GiftBoxModal from "../../components/gift-box-modal/GiftboxModal";
 import PersonalMessageModal from "../../components/gift-box-modal/PersonalMessageModal";
+import { useLoginModalStore } from "../../store/login-modal.store";
+import { routes } from "../../shared/routes/routes";
 
 export default function ProductDetailsPage() {
+  const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [open, setOpen] = useState(false);
@@ -32,6 +35,7 @@ export default function ProductDetailsPage() {
   const [reviewPage, setReviewPage] = useState(1);
   const [wishlisted, setWishlisted] = useState(false);
   const isAuthenticated = useAuthStore((s) => Boolean(s.accessToken));
+  const requestLogin = useLoginModalStore((s) => s.requestLogin);
   const setCart = useCartStore((s) => s.setCart);
   const qc = useQueryClient();
 
@@ -55,7 +59,8 @@ export default function ProductDetailsPage() {
   });
 
   const addToCartMutation = useMutation({
-    mutationFn: () => cartService.addToCart(id!, quantity),
+    mutationFn: ({ productId, qty }: { productId: string; qty: number }) =>
+      cartService.addToCart(productId, qty),
     onSuccess: (cart) => {
       setCart(cart);
       void message.success("Added to cart");
@@ -75,15 +80,32 @@ export default function ProductDetailsPage() {
 
   const handleAddToCart = () => {
     if (!isAuthenticated) {
-      void message.warning("Please log in to add items to your cart");
+      requestLogin();
       return;
     }
-    addToCartMutation.mutate();
+    addToCartMutation.mutate({ productId: id!, qty: quantity });
+  };
+
+  const handleBuyNow = () => {
+    if (!isAuthenticated) {
+      requestLogin();
+      return;
+    }
+    addToCartMutation.mutate(
+      { productId: id!, qty: quantity },
+      {
+        onSuccess: (cart) => {
+          setCart(cart);
+          void qc.invalidateQueries({ queryKey: ["cart"] });
+          navigate(routes.cart);
+        },
+      },
+    );
   };
 
   const handleToggleWishlist = () => {
     if (!isAuthenticated) {
-      void message.warning("Please log in to save items");
+      requestLogin();
       return;
     }
     toggleWishlistMutation.mutate();
@@ -142,22 +164,42 @@ export default function ProductDetailsPage() {
               You may also like
             </p>
             <div className="hidden lg:flex flex-col gap-6">
-              {relatedProducts.length === 0
-                ? [1, 2, 3].map((i) => <ProductCardCart key={i} i={i} />)
-                : relatedProducts.map((p) => (
-                    <div key={p.id} className="flex gap-4 items-center">
-                      <img
-                        className="w-55 h-55 rounded-3xl"
-                        src={primaryImage(p.images, ImagesAndIcons.furasgnBottle)}
-                        alt={p.name}
-                      />
-                      <div>
-                        <p className="text-xl font-bold">{p.name}</p>
-                        <p className="text-[#585858]">{p.category?.name}</p>
-                        <p className="font-semibold">{formatNGN(effectivePrice(p))}</p>
-                      </div>
+              {relatedProducts.length === 0 ? (
+                <p className="text-[#585858]">No related products available.</p>
+              ) : (
+                relatedProducts.map((p) => (
+                  <div
+                    key={p.id}
+                    className="flex gap-4 items-center cursor-pointer"
+                    onClick={() => navigate(`/products/${p.id}`)}
+                  >
+                    <img
+                      className="w-55 h-55 rounded-3xl"
+                      src={primaryImage(p.images, ImagesAndIcons.furasgnBottle)}
+                      alt={p.name}
+                    />
+                    <div className="flex-1">
+                      <p className="text-xl font-bold">{p.name}</p>
+                      <p className="text-[#585858]">{p.category?.name}</p>
+                      <p className="font-semibold">{formatNGN(effectivePrice(p))}</p>
+                      <button
+                        type="button"
+                        className="mt-3 h-10 rounded-full bg-primary px-5 text-sm text-white"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          if (!isAuthenticated) {
+                            requestLogin();
+                            return;
+                          }
+                          addToCartMutation.mutate({ productId: p.id, qty: 1 });
+                        }}
+                      >
+                        Add To Cart
+                      </button>
                     </div>
-                  ))}
+                  </div>
+                ))
+              )}
             </div>
             <div className="mt-8 hidden lg:block">
               <Button type="lightRed" label="View More" />
@@ -209,7 +251,7 @@ export default function ProductDetailsPage() {
               type="red"
               label="Buy Now"
               className="py-6 mt-9 text-base rounded-[55px]"
-              handleClick={handleAddToCart}
+              handleClick={handleBuyNow}
             />
             <div className="mt-4 flex gap-4">
               <Button

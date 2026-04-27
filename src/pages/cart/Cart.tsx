@@ -15,12 +15,14 @@ import { routes } from "../../shared/routes/routes";
 import { useState, useEffect } from "react";
 import { message } from "antd";
 import { ImagesAndIcons } from "../../shared/images-icons/ImagesAndIcons";
+import { useLoginModalStore } from "../../store/login-modal.store";
 
 const Cart = () => {
   const isAuthenticated = useAuthStore((s) => Boolean(s.accessToken));
   const navigate = useNavigate();
   const qc = useQueryClient();
   const setCart = useCartStore((s) => s.setCart);
+  const requestLogin = useLoginModalStore((s) => s.requestLogin);
   const [discountCode, setDiscountCode] = useState("");
   const [discountResult, setDiscountResult] = useState<{
     code: string; discountType: string; value: number;
@@ -64,6 +66,16 @@ const Cart = () => {
       void qc.invalidateQueries({ queryKey: ["cart"] });
     },
     onError: () => void message.error("Could not remove item"),
+  });
+
+  const addFromWishlistMutation = useMutation({
+    mutationFn: (productId: string) => cartService.addToCart(productId, 1),
+    onSuccess: (updated) => {
+      setCart(updated);
+      void qc.invalidateQueries({ queryKey: ["cart"] });
+      void message.success("Added to cart");
+    },
+    onError: () => void message.error("Could not add item to cart"),
   });
 
   const validateDiscountMutation = useMutation({
@@ -146,6 +158,19 @@ const Cart = () => {
                       {formatNGN(effectivePrice(item.product))}
                     </p>
                   </div>
+                  <button
+                    type="button"
+                    className="h-10 rounded-full bg-primary px-4 text-xs text-white"
+                    onClick={() => {
+                      if (!isAuthenticated) {
+                        requestLogin();
+                        return;
+                      }
+                      addFromWishlistMutation.mutate(item.productId);
+                    }}
+                  >
+                    Add To Cart
+                  </button>
                 </div>
               ))}
             </div>
