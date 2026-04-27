@@ -95,11 +95,11 @@ const Login = () => {
         }}
         styles={{ content: { background: "#fff", borderRadius: 24 } }}
       >
-        <div className="py-9 px-8 lato">
-          <div className="flex mb-11 items-center justify-between ">
-            <h2 className="text-2xl font-semibold mb-2">Log In</h2>
-            <button onClick={handleCancel}>
-              <img src={ImagesAndIcons.xIcon} alt="" />
+        <div className="py-6 px-5 sm:py-9 sm:px-8 lato">
+          <div className="flex mb-6 sm:mb-10 items-center justify-between">
+            <h2 className="text-xl sm:text-2xl font-semibold">Log In</h2>
+            <button onClick={handleCancel} className="p-1 shrink-0">
+              <img src={ImagesAndIcons.xIcon} alt="Close" />
             </button>
           </div>
           <CustomInput
@@ -116,10 +116,10 @@ const Login = () => {
           <Button
             type="red"
             label={sendLoading ? "Sending…" : "Log In"}
-            className="font-semibold rounded-[100px] h-14 text-sm my-11"
+            className="font-semibold rounded-[100px] h-14 text-sm my-6 sm:my-10"
             handleClick={() => void handleSendOtp()}
           />
-          <div className="flex items-center justify-center">
+          <div className="flex items-center justify-center pb-2">
             <OauthLogoSlot onClick={handleGoogle} ariaLabel="Continue with Google" />
           </div>
         </div>

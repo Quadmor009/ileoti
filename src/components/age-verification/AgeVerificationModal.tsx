@@ -27,14 +27,14 @@ const AgeVerificationModal = ({
                 <button
                   type="button"
                   onClick={onConfirm}
-                  className="h-14 flex-1 rounded-full bg-[#8B0000] px-6 text-white"
+                  className="h-16 flex-1 rounded-full bg-[#8B0000] px-6 text-base font-medium text-white"
                 >
                   Yes, Enter Site
                 </button>
                 <button
                   type="button"
                   onClick={onDeny}
-                  className="h-14 flex-1 rounded-full border border-[#8B0000] px-6 text-[#8B0000]"
+                  className="h-16 flex-1 rounded-full border border-[#8B0000] px-6 text-base font-medium text-[#8B0000]"
                 >
                   No, Exit
                 </button>
