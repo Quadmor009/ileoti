@@ -59,7 +59,7 @@ const SignUp = () => {
           setPostLoginRedirect(`${location.pathname}${location.search}`);
           setIsModalOpen(true);
         }}
-        className="text-xl font-medium text-black"
+        className="text-sm font-medium text-black"
       >
         Sign Up
       </button>

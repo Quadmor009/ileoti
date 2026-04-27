@@ -186,7 +186,7 @@ const Navbar = () => {
         >
           <button
             type="button"
-            className="text-xl font-medium lato text-black flex items-center gap-1.5 shrink-0 rounded-lg px-1 py-0.5 hover:bg-[#FFF5F5] transition-colors"
+            className="text-sm font-medium lato text-black flex items-center gap-1.5 shrink-0 rounded-lg px-1 py-0.5 hover:bg-[#FFF5F5] transition-colors"
             aria-haspopup="menu"
             aria-expanded="false"
           >
@@ -253,7 +253,7 @@ const Navbar = () => {
         <div className="flex items-center gap-8 justify-self-end flex-wrap justify-end">
           <button
             type="button"
-            className="text-xl font-medium text-black"
+            className="text-sm font-medium text-black"
             onClick={() => navigate(routes.contact)}
           >
             Contact Us

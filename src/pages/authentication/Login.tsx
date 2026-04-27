@@ -72,7 +72,7 @@ const Login = () => {
           setPostLoginRedirect(`${location.pathname}${location.search}`);
           setIsModalOpen(true);
         }}
-        className="rounded-[100px] h-14 bg-[#80011D] text-base font-medium text-white px-[45px] hover:bg-[#66001D]"
+        className="rounded-[100px] h-14 bg-[#80011D] text-sm font-medium text-white px-[45px] hover:bg-[#66001D]"
       >
         Log In
       </button>
