@@ -29,9 +29,19 @@ const CATEGORY_FALLBACKS = [
 const Home = () => {
   const [hovered, setHovered] = useState("");
 
-  const { data: productsData, isLoading: productsLoading, isError: productsError } = useQuery({
-    queryKey: ["featured-products"],
-    queryFn: () => productService.getFeaturedProducts(),
+  const {
+    data: productsData,
+    isLoading: productsLoading,
+    isError: productsError,
+  } = useQuery({
+    queryKey: ["home-top-picks"],
+    queryFn: async () => {
+      const featured = await productService.getFeaturedProducts();
+      if (featured.data.length > 0) {
+        return featured;
+      }
+      return productService.getProducts({ page: 1, limit: 5 });
+    },
   });
 
   const { data: categories } = useQuery({
@@ -68,15 +78,11 @@ const Home = () => {
             <p className="text-center text-red-600 py-6">Failed to load products</p>
           )}
           {!productsLoading && !productsError && featuredProducts.length === 0 && (
-            <>
-              <ProductCard />
-              <ProductCard />
-              <ProductCard />
-              <ProductCard />
-              <ProductCard />
-            </>
+            <p className="text-center text-[#585858] py-6">
+              No products available right now.
+            </p>
           )}
-          {featuredProducts.slice(0, 5).map((product) => (
+          {featuredProducts.map((product) => (
             <ProductCard key={product.id} product={product} />
           ))}
         </div>
