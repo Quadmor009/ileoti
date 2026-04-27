@@ -1,5 +1,7 @@
 import { ImagesAndIcons } from "../../shared/images-icons/ImagesAndIcons";
 import { useState } from "react";
+import { Link } from "react-router-dom";
+import { routes } from "../../shared/routes/routes";
 
 const Footer = () => {
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
@@ -37,6 +39,7 @@ const Footer = () => {
             {faqs.map((q, i) => (
               <div key={i}>
                 <button
+                  type="button"
                   onClick={() => toggleFaq(i)}
                   className="flex justify-between items-center text-base font-medium w-full cursor-pointer text-left border-b border-gray-600 pb-2"
                 >
@@ -54,18 +57,44 @@ const Footer = () => {
           </div>
         </div>
 
-        {/* Right: Logo + Nav + Newsletter */}
-        <div className="flex flex-col justify-between">
-          <ul className="text-xs font-semibold space-y-3 mb-6">
-            <li className="cursor-pointer">HOME</li>
-            <li className="cursor-pointer">OUR PRODUCTS</li>
-            <li className="cursor-pointer">ABOUT</li>
-            <li className="cursor-pointer">TERMS & CONDITION</li>
-            <li className="cursor-pointer">PRIVACY POLICY</li>
+        {/* Center: logo + nav */}
+        <div className="flex flex-col items-center justify-center text-center gap-6">
+          <Link to={routes.home} className="inline-block" aria-label="Ile Oti home">
+            <img
+              src="/logos/white-logo.svg"
+              alt=""
+              className="h-14 md:h-16 w-auto max-w-[220px] object-contain mx-auto"
+            />
+          </Link>
+          <ul className="text-xs font-semibold space-y-3">
+            <li>
+              <Link to={routes.home} className="hover:underline">
+                HOME
+              </Link>
+            </li>
+            <li>
+              <Link to={routes.products} className="hover:underline">
+                OUR PRODUCTS
+              </Link>
+            </li>
+            <li>
+              <Link to={routes.about} className="hover:underline">
+                ABOUT
+              </Link>
+            </li>
+            <li>
+              <span className="opacity-60 cursor-default" title="Coming soon">
+                TERMS &amp; CONDITION
+              </span>
+            </li>
+            <li>
+              <span className="opacity-60 cursor-default" title="Coming soon">
+                PRIVACY POLICY
+              </span>
+            </li>
           </ul>
         </div>
         <div className="w-full lg:max-w-60">
-          <div className="text-2xl font-bold mb-2">LOGO</div>
           <p className="text-xs text-gray-400 mb-6">
             2025 All right reserved by Ile Oti
           </p>
@@ -82,7 +111,10 @@ const Footer = () => {
                 placeholder="Enter Email Address"
                 className="border border-b-[#D9D9D9] py-1 bg-none border-t-0 border-x-0"
               />
-              <button className="bg-white cursor-pointer w-full py-3 font-medium mt-2 text-base rounded-md text-black">
+              <button
+                type="button"
+                className="bg-white cursor-pointer w-full py-3 font-medium mt-2 text-base rounded-md text-black"
+              >
                 Submit
               </button>
             </div>

@@ -7,6 +7,7 @@ import ProductDetailsPage from "./pages/product-details/ProductDetails";
 import Checkout from "./pages/checkout/Checkout";
 import BookAnEvent from "./pages/book-event/BookAnEvent";
 import ContactUs from "./pages/contact-us/ContactUs";
+import About from "./pages/about/About";
 import Cart from "./pages/cart/Cart";
 import Orders from "./pages/dashboard/orders/Orders";
 import Profile from "./pages/dashboard/profile/Profile";
@@ -50,6 +51,7 @@ function App() {
         <Route path={routes.checkout} element={<Checkout />} />
         <Route path={routes.bookEvent} element={<BookAnEvent />} />
         <Route path={routes.contact} element={<ContactUs />} />
+        <Route path={routes.about} element={<About />} />
         <Route path={routes.cart} element={<Cart />} />
         <Route path={routes.orders} element={<Orders />} />
         <Route path={routes.ordersDetails} element={<OrderDetails />} />

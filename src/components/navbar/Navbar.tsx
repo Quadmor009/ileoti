@@ -1,8 +1,9 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import type { MenuProps } from "antd";
 import { Badge, Dropdown, message } from "antd";
 import { BellOutlined } from "@ant-design/icons";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Login from "../../pages/authentication/Login";
 import SignUp from "../../pages/authentication/SignUp";
 import CartDropDown from "../../pages/cart/component/CartDropDown";
@@ -20,6 +21,7 @@ import {
 } from "../../services/notification.service";
 import { getApiErrorMessage } from "../../lib/api-error";
 import { routes } from "../../shared/routes/routes";
+import { productService } from "../../services/product.service";
 
 function initials(
   user: {
@@ -78,6 +80,30 @@ const Navbar = () => {
     enabled: isLoggedIn,
     refetchInterval: 60_000,
   });
+
+  const { data: navCategories } = useQuery({
+    queryKey: ["categories", "navbar"],
+    queryFn: () => productService.getCategories(),
+    staleTime: 60_000,
+  });
+
+  const productMenuItems: MenuProps["items"] = useMemo(() => {
+    const fromApi =
+      navCategories?.map((c) => ({
+        key: c.id,
+        label: c.name,
+        onClick: () =>
+          navigate(`${routes.products}?categoryId=${encodeURIComponent(c.id)}`),
+      })) ?? [];
+    return [
+      {
+        key: "all",
+        label: "All products",
+        onClick: () => navigate(routes.products),
+      },
+      ...fromApi,
+    ];
+  }, [navCategories, navigate]);
 
   const markOne = useMutation({
     mutationFn: (id: string) => markAsRead(id),
@@ -164,10 +190,22 @@ const Navbar = () => {
 
   return (
     <div className="sticky top-0 z-50 bg-white shadow-sm w-full">
-      <nav className="max-w-[1300px] mx-auto px-6 py-5 lato hidden lg:flex items-center justify-between">
-      <div className="flex items-center gap-3">
-        <p className="text-xl font-medium lato text-black">Products</p>
-        <form onSubmit={handleSearchSubmit} className="flex items-center gap-2">
+      <nav className="max-w-[1300px] mx-auto px-6 py-4 lato hidden lg:grid lg:grid-cols-[1fr_auto_1fr] lg:items-center lg:gap-4">
+      <div className="flex items-center gap-3 justify-self-start min-w-0">
+        <Dropdown menu={{ items: productMenuItems }} trigger={["click"]} placement="bottomLeft">
+          <button
+            type="button"
+            className="text-xl font-medium lato text-black flex items-center gap-1 shrink-0"
+            aria-haspopup="menu"
+            aria-expanded="false"
+          >
+            Products
+            <span className="text-sm opacity-70" aria-hidden>
+              ▾
+            </span>
+          </button>
+        </Dropdown>
+        <form onSubmit={handleSearchSubmit} className="flex items-center gap-2 min-w-0 flex-1 max-w-md">
           <Search
             placeholder="Search any drink or Brand here..."
             value={searchDraft}
@@ -175,9 +213,26 @@ const Navbar = () => {
           />
         </form>
       </div>
+      <Link
+        to={routes.home}
+        className="justify-self-center flex items-center justify-center"
+        aria-label="Ile Oti home"
+      >
+        <img
+          src="/logos/red-logo.svg"
+          alt=""
+          className="h-10 md:h-11 w-auto max-h-14 max-w-[200px] object-contain"
+        />
+      </Link>
       {isLoggedIn ? (
-        <div className="flex items-center gap-7">
-          <p className="text-xl font-medium text-black">Contact Us</p>
+        <div className="flex items-center gap-7 justify-self-end flex-wrap justify-end">
+          <button
+            type="button"
+            className="text-xl font-medium text-black"
+            onClick={() => navigate(routes.contact)}
+          >
+            Contact Us
+          </button>
           <Dropdown dropdownRender={() => dropdownContent} trigger={["click"]}>
             <button
               type="button"
@@ -209,8 +264,14 @@ const Navbar = () => {
           </button>
         </div>
       ) : (
-        <div className="flex items-center gap-8">
-          <p className="text-xl font-medium text-black">Contact Us</p>
+        <div className="flex items-center gap-8 justify-self-end flex-wrap justify-end">
+          <button
+            type="button"
+            className="text-xl font-medium text-black"
+            onClick={() => navigate(routes.contact)}
+          >
+            Contact Us
+          </button>
           <SignUp />
           <Login />
         </div>

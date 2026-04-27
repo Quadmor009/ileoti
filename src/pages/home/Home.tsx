@@ -64,7 +64,7 @@ const Home = () => {
         <h3 className="text-3xl font-semibold text-center text-primary">
           TOP PICKS
         </h3>
-        <div className="flex items-center gap-1 overflow-x-auto no-scrollbar mt-10 mb-30 lg:justify-center w-full">
+        <div className="flex items-center gap-1 overflow-x-auto no-scrollbar mt-10 mb-8 lg:justify-center w-full">
           {productsLoading && (
             <>
               {Array.from({ length: 5 }).map((_, i) => (
@@ -85,7 +85,7 @@ const Home = () => {
             <ProductCard key={product.id} product={product} />
           ))}
         </div>
-        <div className="relative ml-21">
+        <div className="relative ml-21 mt-16 lg:mt-20 pt-8 border-t border-[#E8E8E8]">
           <div className="w-62 relative z-10 pointer-events-none">
             <p className="text-xl text-black font-semibold">Categories</p>
             <h4 className="text-[40px] font-bold text-primary">
@@ -195,7 +195,7 @@ const Home = () => {
           </div>
         </div>
       </div>
-      <div className="flex gap-2 items-center justify-center py-7">
+      <div className="flex gap-4 items-center justify-center py-7">
         <div className="bg-black h-16 w-16 rounded-full flex items-center justify-center cursor-pointer">
           <InstagramOutlined style={{ color: "white", fontSize: 28 }} />
         </div>

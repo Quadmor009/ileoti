@@ -27,7 +27,11 @@ const HeroSection = () => {
             <Button handleClick={() => navigate(routes.products)} type="white" label="Shop Now" className="hover:bg-[#80011D] hover:text-white transition-all duration-300"/>
           </div>
           <div className="w-full lg:w-[219px]">
-            <Button type="transparent" label="Build A Box" />
+            <Button
+              type="transparent"
+              label="Build A Box"
+              handleClick={() => navigate(routes.contact)}
+            />
           </div>
         </div>
       </div>
