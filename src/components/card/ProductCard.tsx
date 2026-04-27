@@ -1,9 +1,16 @@
 import { Rate } from "antd";
+import { message } from "antd";
+import type { MouseEvent } from "react";
 import { ImagesAndIcons } from "../../shared/images-icons/ImagesAndIcons";
 import { useNavigate } from "react-router-dom";
 import { routes } from "../../shared/routes/routes";
 import type { Product } from "../../types";
 import { effectivePrice, formatNGN, primaryImage } from "../../lib/format";
+import { useAuthStore } from "../../store/auth.store";
+import { useLoginModalStore } from "../../store/login-modal.store";
+import { cartService } from "../../services/cart.service";
+import { useCartStore } from "../../store/cart.store";
+import { getApiErrorMessage } from "../../lib/api-error";
 
 interface ProductCardProps {
   product?: Product;
@@ -11,9 +18,11 @@ interface ProductCardProps {
 
 const ProductCard = ({ product }: ProductCardProps = {}) => {
   const navigate = useNavigate();
+  const isAuthed = useAuthStore((s) => Boolean(s.accessToken));
+  const requestLogin = useLoginModalStore((s) => s.requestLogin);
+  const setCart = useCartStore((s) => s.setCart);
 
   const id = product?.id;
-  console.log("product id:", product?.id);
   const name = product?.name ?? "Deanston 12 Year Old";
   const image = primaryImage(product?.images, ImagesAndIcons.furasgnBottle);
   const price = product ? effectivePrice(product) : 40000;
@@ -28,6 +37,29 @@ const ProductCard = ({ product }: ProductCardProps = {}) => {
   const handleCardClick = () => {
     if (!id) return;
     navigate(`${routes.products}/${id}`);
+  };
+
+  const handleAddToCartClick = async (e: MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation();
+
+    if (!id) {
+      void message.error("This product is missing an ID and cannot be added.");
+      return;
+    }
+
+    if (!isAuthed) {
+      requestLogin();
+      void message.warning("Please log in to add items to your cart");
+      return;
+    }
+
+    try {
+      const cart = await cartService.addToCart(id, 1);
+      setCart(cart);
+      void message.success("Added to cart");
+    } catch (error) {
+      void message.error(getApiErrorMessage(error));
+    }
   };
 
   return (
@@ -82,7 +114,7 @@ const ProductCard = ({ product }: ProductCardProps = {}) => {
       </div>
       <div className="flex gap-2 items-center">
         <button
-          onClick={(e) => e.stopPropagation()}
+          onClick={handleAddToCartClick}
           className="text-xs text-white bg-primary rounded-[56px] px-6 lg:px-[50px] py-2 lg:py-4"
         >
           Add To Cart
