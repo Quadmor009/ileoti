@@ -1,6 +1,7 @@
 import { Rate, message } from "antd";
 import type { MouseEvent } from "react";
 import { useMemo, useState } from "react";
+import { useMutation } from "@tanstack/react-query";
 import { ImagesAndIcons } from "../../shared/images-icons/ImagesAndIcons";
 import { useNavigate } from "react-router-dom";
 import { routes } from "../../shared/routes/routes";
@@ -39,7 +40,6 @@ const ProductCard = ({ product, onLoginRequired }: ProductCardProps) => {
   const [personalMessageOpen, setPersonalMessageOpen] = useState(false);
   const [giftMessage, setGiftMessage] = useState("");
   const [quantity, setQuantity] = useState(0);
-  const [busy, setBusy] = useState(false);
 
   const id = product.id;
   const name = product.name;
@@ -58,33 +58,17 @@ const ProductCard = ({ product, onLoginRequired }: ProductCardProps) => {
     navigate(`${routes.products}/${id}`);
   };
 
-  const handleAddToCartClick = async (
-    e: MouseEvent<HTMLButtonElement>,
-    newQuantity: number,
-  ) => {
-    e.stopPropagation();
-    if (!isLoggedIn) {
-      onLoginRequired?.();
-      return;
-    }
-    if (busy) return;
-    setBusy(true);
-    try {
-      console.log(
-        "Adding to cart:",
-        product.id,
-        "token:",
-        useAuthStore.getState().accessToken,
-      );
-      const cart = await cartService.addToCart(id, newQuantity);
+  const addToCartMutation = useMutation({
+    mutationFn: (nextQuantity: number) => cartService.addToCart(id, nextQuantity),
+    onSuccess: (cart, nextQuantity) => {
       setCart(cart);
-      setQuantity(newQuantity);
-    } catch (error) {
+      // Ensure UI switches to quantity mode after successful first add.
+      setQuantity(nextQuantity === 1 ? 1 : nextQuantity);
+    },
+    onError: (error) => {
       void message.error(getApiErrorMessage(error));
-    } finally {
-      setBusy(false);
-    }
-  };
+    },
+  });
 
   const handleWishlistClick = async (e: MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
@@ -109,29 +93,33 @@ const ProductCard = ({ product, onLoginRequired }: ProductCardProps) => {
     setGiftBoxOpen(true);
   };
 
+  const handleAddToCartClick = (e: MouseEvent<HTMLButtonElement>, newQuantity: number) => {
+    e.stopPropagation();
+    if (!isLoggedIn) {
+      onLoginRequired?.();
+      return;
+    }
+    addToCartMutation.mutate(newQuantity);
+  };
+
   const handleDecrement = async (e: MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
     if (!isLoggedIn) {
       onLoginRequired?.();
       return;
     }
-    if (busy) return;
+    if (addToCartMutation.isPending) return;
     const next = Math.max(quantity - 1, 0);
-    setBusy(true);
     try {
       if (next === 0) {
         const cart = await cartService.removeFromCart(id);
         setCart(cart);
         setQuantity(0);
       } else {
-        const cart = await cartService.addToCart(id, next);
-        setCart(cart);
-        setQuantity(next);
+        addToCartMutation.mutate(next);
       }
     } catch (error) {
       void message.error(getApiErrorMessage(error));
-    } finally {
-      setBusy(false);
     }
   };
 
@@ -141,18 +129,9 @@ const ProductCard = ({ product, onLoginRequired }: ProductCardProps) => {
       onLoginRequired?.();
       return;
     }
-    if (busy) return;
+    if (addToCartMutation.isPending) return;
     const next = quantity + 1;
-    setBusy(true);
-    try {
-      const cart = await cartService.addToCart(id, next);
-      setCart(cart);
-      setQuantity(next);
-    } catch (error) {
-      void message.error(getApiErrorMessage(error));
-    } finally {
-      setBusy(false);
-    }
+    addToCartMutation.mutate(next);
   };
 
   return (
@@ -224,7 +203,7 @@ const ProductCard = ({ product, onLoginRequired }: ProductCardProps) => {
           <button
             onClick={(e) => void handleAddToCartClick(e, 1)}
             className="flex-1 h-14 text-xs text-white bg-primary rounded-[56px] px-6"
-            disabled={busy}
+            disabled={addToCartMutation.isPending}
           >
             Add To Cart
           </button>
@@ -233,11 +212,19 @@ const ProductCard = ({ product, onLoginRequired }: ProductCardProps) => {
             className="flex-1 h-14 rounded-[56px] border border-[#80011D] flex items-center justify-between px-4"
             onClick={(e) => e.stopPropagation()}
           >
-            <button type="button" onClick={(e) => void handleDecrement(e)} disabled={busy}>
+            <button
+              type="button"
+              onClick={(e) => void handleDecrement(e)}
+              disabled={addToCartMutation.isPending}
+            >
               -
             </button>
             <span className="text-sm font-medium">{quantity}</span>
-            <button type="button" onClick={(e) => void handleIncrement(e)} disabled={busy}>
+            <button
+              type="button"
+              onClick={(e) => void handleIncrement(e)}
+              disabled={addToCartMutation.isPending}
+            >
               +
             </button>
           </div>

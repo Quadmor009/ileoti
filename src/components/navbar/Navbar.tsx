@@ -164,7 +164,7 @@ const Navbar = () => {
   );
 
   return (
-    <nav className="bg-white max-w-300 mx-auto py-7 lato hidden lg:flex items-center justify-between">
+    <nav className="sticky top-0 z-50 bg-white shadow-sm max-w-300 mx-auto py-7 lato hidden lg:flex items-center justify-between">
       <div className="flex items-center gap-3">
         <p className="text-xl font-bold lato text-black">Products</p>
         <form onSubmit={handleSearchSubmit} className="flex items-center gap-2">
@@ -191,14 +191,14 @@ const Navbar = () => {
           </Dropdown>
           <div className="flex items-center gap-2">
             <FavouritesDropDown />
-            <Badge
-              count={itemCount > 0 ? itemCount : 0}
-              size="small"
-              offset={[-3, 3]}
-              styles={{ indicator: { backgroundColor: "#B00020" } }}
-            >
+            <div className="relative overflow-visible">
               <CartDropDown />
-            </Badge>
+              {itemCount > 0 && (
+                <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full bg-[#8B0000] text-white text-[10px] font-bold leading-[18px] text-center">
+                  {itemCount}
+                </span>
+              )}
+            </div>
           </div>
           <div
             className="w-10 h-10 bg-black rounded-full flex items-center justify-center text-white text-sm font-semibold"

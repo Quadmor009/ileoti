@@ -1,4 +1,4 @@
-import { Checkbox } from "antd";
+import { Checkbox, Spin } from "antd";
 import Button from "../../components/btns/Button";
 import Footer from "../../components/footer/Footer";
 import Navbar from "../../components/navbar/Navbar";
@@ -15,14 +15,16 @@ import { useQuery } from "@tanstack/react-query";
 import { productService } from "../../services/product.service";
 import { effectivePrice, primaryImage } from "../../lib/format";
 
-const LIMIT = 16;
+const DEFAULT_CATEGORY_TABS = ["Cognac", "Gin", "Pineau", "Whiskey"];
 
 const Products = () => {
   const [searchParams] = useSearchParams();
   const [currentPage, setCurrentPage] = useState(1);
   const [search, setSearch] = useState(() => searchParams.get("search") ?? "");
   const [debouncedSearch, setDebouncedSearch] = useState(() => searchParams.get("search") ?? "");
-  const [selectedCategory, setSelectedCategory] = useState<string | undefined>();
+  const [selectedCategory, setSelectedCategory] = useState<string | undefined>(
+    () => searchParams.get("categoryId") ?? undefined,
+  );
   const [openGiftBox, setOpenGiftBox] = useState(false);
   const [openGiftBoxTwo, setOpenGiftBoxTwo] = useState(false);
   const [addPersonalMessage, setAddPersonalMessage] = useState(false);
@@ -31,8 +33,10 @@ const Products = () => {
 
   useEffect(() => {
     const q = searchParams.get("search") ?? "";
+    const categoryId = searchParams.get("categoryId") ?? undefined;
     setSearch(q);
     setDebouncedSearch(q);
+    setSelectedCategory(categoryId);
     setCurrentPage(1);
   }, [searchParams]);
 
@@ -51,7 +55,7 @@ const Products = () => {
     queryFn: () =>
       productService.getProducts({
         page: currentPage,
-        limit: LIMIT,
+        limit: 20,
         search: debouncedSearch || undefined,
         categoryId: selectedCategory,
       }),
@@ -63,7 +67,18 @@ const Products = () => {
   });
 
   const products = productsData?.data ?? [];
-  const totalPages = productsData ? Math.ceil(productsData.total / LIMIT) : 1;
+  const totalPagesFromMeta = (productsData as { meta?: { totalPages?: number } } | undefined)?.meta
+    ?.totalPages;
+  const totalPages =
+    totalPagesFromMeta ??
+    (productsData ? Math.max(1, Math.ceil(productsData.total / 20)) : 1);
+  const dedupedCategories = (categories ?? []).filter(
+    (category, index, all) =>
+      all.findIndex((item) => item.name.toLowerCase() === category.name.toLowerCase()) === index,
+  );
+  const quickTabs = DEFAULT_CATEGORY_TABS.map((tabName) =>
+    dedupedCategories.find((category) => category.name.toLowerCase() === tabName.toLowerCase()),
+  ).filter(Boolean);
 
   return (
     <section>
@@ -73,6 +88,41 @@ const Products = () => {
           <p className="font-bold text-2xl lg:text-[40px] text-white">
             Explore our products
           </p>
+        </div>
+      </div>
+      <div className="max-w-270 w-[90%] mx-auto mt-6 mb-2">
+        <div className="flex items-center gap-3 overflow-x-auto no-scrollbar">
+          <button
+            type="button"
+            onClick={() => {
+              setSelectedCategory(undefined);
+              setCurrentPage(1);
+            }}
+            className={`px-4 py-2 rounded-full border text-sm ${
+              !selectedCategory
+                ? "bg-primary text-white border-primary"
+                : "bg-white text-black border-[#D9D9D9]"
+            }`}
+          >
+            All
+          </button>
+          {quickTabs.map((category) => (
+            <button
+              key={category!.id}
+              type="button"
+              onClick={() => {
+                setSelectedCategory(category!.id);
+                setCurrentPage(1);
+              }}
+              className={`px-4 py-2 rounded-full border text-sm ${
+                selectedCategory === category!.id
+                  ? "bg-primary text-white border-primary"
+                  : "bg-white text-black border-[#D9D9D9]"
+              }`}
+            >
+              {category!.name}
+            </button>
+          ))}
         </div>
       </div>
       <div className="flex justify-between flex-wrap gap-y-4 mx-auto items-center py-6 max-w-270 w-[90%]">
@@ -223,48 +273,10 @@ const Products = () => {
           />
         </div>
       </div>
-      <div className="max-w-270 w-[90%] mx-auto mb-6 overflow-x-auto no-scrollbar">
-        <div className="flex items-center gap-3 min-w-max">
-          <button
-            type="button"
-            onClick={() => {
-              setSelectedCategory(undefined);
-              setCurrentPage(1);
-            }}
-            className={`px-4 py-2 rounded-full border text-sm ${
-              !selectedCategory
-                ? "bg-primary text-white border-primary"
-                : "bg-white text-black border-[#D9D9D9]"
-            }`}
-          >
-            All
-          </button>
-          {(categories ?? []).map((category) => (
-            <button
-              key={category.id}
-              type="button"
-              onClick={() => {
-                setSelectedCategory(category.id);
-                setCurrentPage(1);
-              }}
-              className={`px-4 py-2 rounded-full border text-sm ${
-                selectedCategory === category.id
-                  ? "bg-primary text-white border-primary"
-                  : "bg-white text-black border-[#D9D9D9]"
-              }`}
-            >
-              {category.name}
-            </button>
-          ))}
-        </div>
-      </div>
-
       {/* Products grid */}
       {isLoading && (
-        <div className="grid grid-cols-2 md:grid-cols-4 max-w-270 mx-auto w-[90%] gap-y-14 gap-x-1 justify-center">
-          {Array.from({ length: LIMIT }).map((_, i) => (
-            <div key={i} className="lg:w-[246px] lg:h-[380px] w-40 h-64 rounded-3xl bg-[#F4EEEE] animate-pulse" />
-          ))}
+        <div className="max-w-270 mx-auto w-[90%] py-16 flex justify-center">
+          <Spin size="large" />
         </div>
       )}
       {isError && (

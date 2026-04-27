@@ -15,6 +15,7 @@ import {
 import GetExclusiveAccessModal from "../../components/get-exclusive-access-modal/GetExclusiveAccessModal";
 import { useQuery } from "@tanstack/react-query";
 import { productService } from "../../services/product.service";
+import { useNavigate } from "react-router-dom";
 
 const CATEGORY_FALLBACKS = [
   ImagesAndIcons.organicSpiritImage,
@@ -28,6 +29,7 @@ const CATEGORY_FALLBACKS = [
 
 const Home = () => {
   const [hovered, setHovered] = useState("");
+  const navigate = useNavigate();
 
   const {
     data: productsData,
@@ -44,9 +46,12 @@ const Home = () => {
   });
 
   const featuredProducts = productsData?.data ?? [];
-  const categoryImages = categories?.length
-    ? categories.map((c, i) => c.imageUrl ?? CATEGORY_FALLBACKS[i] ?? CATEGORY_FALLBACKS[0])
-    : CATEGORY_FALLBACKS;
+  const categoryCards = categories?.length
+    ? categories.map((category, i) => ({
+        id: category.id,
+        image: category.imageUrl ?? CATEGORY_FALLBACKS[i] ?? CATEGORY_FALLBACKS[0],
+      }))
+    : [];
 
   return (
     <section>
@@ -86,15 +91,16 @@ const Home = () => {
             </h4>
           </div>
           <div className="flex gap-4">
-            {categoryImages.map((image, index) => (
+            {categoryCards.map((card) => (
               <div
-                key={index}
+                key={card.id}
                 style={{
-                  backgroundImage: `url(${image})`,
+                  backgroundImage: `url(${card.image})`,
                   backgroundSize: "cover",
                   backgroundPosition: "center",
                 }}
                 className="w-69 h-88 rounded-2xl transition-all duration-500 ease-in-out hover:h-95 origin-center shrink-0 cursor-pointer"
+                onClick={() => navigate(`/products?categoryId=${card.id}`)}
               />
             ))}
           </div>
