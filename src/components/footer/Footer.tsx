@@ -44,7 +44,7 @@ const Footer = () => {
                   <span>{activeIndex === i ? "−" : "+"}</span>
                 </button>
                 {activeIndex === i && (
-                  <p className="text-gray-400 text-xs mt-2">
+                  <p className="text-gray-400 text-base mt-2">
                     Ile-Oti is a brand dedicated to offering premium beverages
                     and cultural experiences.
                   </p>
