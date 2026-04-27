@@ -128,8 +128,9 @@ export default function ProductDetailsPage() {
     <div>
       <Navbar />
       <div className="max-w-[1200px] mx-auto">
-        <p className="text-base text-black font-semibold mt-10">
-          Home {">"} Products {">"} {product.name}
+        <p className="text-base text-[#585858] font-normal mt-10">
+          Home {">"} Products {">"}{" "}
+          <span className="text-[#8B0000]">{product.name}</span>
         </p>
         <div className="py-9 grid grid-cols-1 lg:grid-cols-2 gap-16">
           <div>
@@ -191,14 +192,14 @@ export default function ProductDetailsPage() {
                 </p>
               )}
             </div>
-            <p className="text-black text-xl font-semibold mt-1">
+            <p className="text-[#585858] text-xl font-normal mt-1">
               Product Category: {product.category?.name ?? "—"}
             </p>
 
             {/* Quantity + Buttons */}
             <div className="mt-9 flex items-center justify-between">
-              <p className="font-semibold text-2xl text-[#585858]">Quantity</p>
-              <div className="bg-[#F4EEEE] rounded-[55px] px-4 py-2 flex gap-2 font-semibold text-2xl">
+              <p className="font-normal text-2xl text-[#585858]">Quantity</p>
+              <div className="bg-[#F4EEEE] rounded-[55px] px-4 py-2 flex gap-2 font-semibold text-2xl w-40">
                 <button onClick={() => setQuantity((q) => Math.max(1, q - 1))}>-</button>
                 <span>{quantity}</span>
                 <button onClick={() => setQuantity((q) => q + 1)}>+</button>
@@ -241,7 +242,7 @@ export default function ProductDetailsPage() {
             <div className="mt-8">
               <h3 className="text-xl font-bold mb-2">Description</h3>
               {product.description ? (
-                <p className="bg-[#F4EEEE] rounded-2xl p-6 mt-2 text-xl font-normal text-[#585858]">
+                <p className="bg-[#F4EEEE] rounded-2xl p-6 mt-2 text-xl font-normal text-[#726868]">
                   {product.description}
                 </p>
               ) : (
