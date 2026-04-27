@@ -305,7 +305,7 @@ const Products = () => {
             <p className="col-span-4 text-center text-[#585858] py-10">No products found.</p>
           ) : (
             products.map((product) => (
-              <div key={product.id} className="min-w-0 flex h-full">
+              <div key={product.id} className="min-w-0 flex flex-col">
                 <ProductCard product={product} />
               </div>
             ))
@@ -332,6 +332,7 @@ const Products = () => {
       <PersonalMessageModal
         open={addPersonalMessage}
         setOpen={setAddPersonalMessage}
+        initialDraft={giftMessage}
         onSubmitMessage={(msg) => setGiftMessage(msg)}
       />
     </section>
