@@ -6,6 +6,11 @@
         padding: 4px 8px;
 }
 
-button {
-  max-height: 56px;
+/* Modals: clean white content, lighter overlay (avoid heavy grey panels inside components too). */
+.ant-modal .ant-modal-content {
+  background: #fff !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12) !important;
+}
+.ant-modal-mask {
+  background: rgba(0, 0, 0, 0.35) !important;
 }

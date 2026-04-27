@@ -8,9 +8,9 @@ import Login from "../../pages/authentication/Login";
 import SignUp from "../../pages/authentication/SignUp";
 import CartDropDown from "../../pages/cart/component/CartDropDown";
 import FavouritesDropDown from "../../pages/cart/component/Favourites";
+import { AccountMenuPopover } from "./AccountMenuPopover";
 import Search from "../search/Search";
 import { useAuthStore } from "../../store/auth.store";
-import { authService } from "../../services/auth.service";
 import { cartService } from "../../services/cart.service";
 import { useCartStore } from "../../store/cart.store";
 import {
@@ -56,10 +56,9 @@ function formatNotifTime(iso: string) {
 const Navbar = () => {
   const navigate = useNavigate();
   const qc = useQueryClient();
-  const { user, clearAuth } = useAuthStore();
+  const { user } = useAuthStore();
   const isLoggedIn = Boolean(user);
   const setCart = useCartStore((s) => s.setCart);
-  const [logoutBusy, setLogoutBusy] = useState(false);
   const [searchDraft, setSearchDraft] = useState("");
 
   useEffect(() => {
@@ -101,6 +100,7 @@ const Navbar = () => {
         label: "All products",
         onClick: () => navigate(routes.products),
       },
+      { type: "divider" },
       ...fromApi,
     ];
   }, [navCategories, navigate]);
@@ -121,19 +121,6 @@ const Navbar = () => {
     },
     onError: (e) => void message.error(getApiErrorMessage(e)),
   });
-
-  const handleLogout = async () => {
-    setLogoutBusy(true);
-    try {
-      await authService.logout();
-      clearAuth();
-      void message.success("Logged out");
-    } catch {
-      void message.error("Could not log out. Please try again.");
-    } finally {
-      setLogoutBusy(false);
-    }
-  };
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -191,16 +178,20 @@ const Navbar = () => {
   return (
     <div className="sticky top-0 z-50 bg-white shadow-sm w-full">
       <nav className="max-w-[1300px] mx-auto px-6 py-4 lato hidden lg:grid lg:grid-cols-[1fr_auto_1fr] lg:items-center lg:gap-4">
-      <div className="flex items-center gap-3 justify-self-start min-w-0">
-        <Dropdown menu={{ items: productMenuItems }} trigger={["click"]} placement="bottomLeft">
+      <div className="flex items-center gap-6 lg:gap-8 justify-self-start min-w-0">
+        <Dropdown
+          menu={{ items: productMenuItems, className: "min-w-[240px] py-1 rounded-lg shadow-md" }}
+          trigger={["click"]}
+          placement="bottomLeft"
+        >
           <button
             type="button"
-            className="text-xl font-medium lato text-black flex items-center gap-1 shrink-0"
+            className="text-xl font-medium lato text-black flex items-center gap-1.5 shrink-0 rounded-lg px-1 py-0.5 hover:bg-[#FFF5F5] transition-colors"
             aria-haspopup="menu"
             aria-expanded="false"
           >
             Products
-            <span className="text-sm opacity-70" aria-hidden>
+            <span className="text-sm opacity-60" aria-hidden>
               ▾
             </span>
           </button>
@@ -225,14 +216,7 @@ const Navbar = () => {
         />
       </Link>
       {isLoggedIn ? (
-        <div className="flex items-center gap-7 justify-self-end flex-wrap justify-end">
-          <button
-            type="button"
-            className="text-xl font-medium text-black"
-            onClick={() => navigate(routes.contact)}
-          >
-            Contact Us
-          </button>
+        <div className="flex items-center gap-5 lg:gap-6 justify-self-end flex-wrap justify-end">
           <Dropdown dropdownRender={() => dropdownContent} trigger={["click"]}>
             <button
               type="button"
@@ -248,20 +232,7 @@ const Navbar = () => {
             <FavouritesDropDown />
             <CartDropDown />
           </div>
-          <div
-            className="w-10 h-10 bg-black rounded-full flex items-center justify-center text-white text-sm font-semibold"
-            title={user?.email ?? "Account"}
-          >
-            {initials(user)}
-          </div>
-          <button
-            type="button"
-            onClick={() => void handleLogout()}
-            disabled={logoutBusy}
-            className="text-xl font-bold text-black disabled:opacity-50"
-          >
-            {logoutBusy ? "…" : "Log out"}
-          </button>
+          <AccountMenuPopover initials={initials(user)} userEmail={user?.email} />
         </div>
       ) : (
         <div className="flex items-center gap-8 justify-self-end flex-wrap justify-end">

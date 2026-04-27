@@ -225,7 +225,7 @@ const Cart = () => {
         </div>
       </div>
       {(wishlist?.items ?? []).length > 0 && (
-        <div className="max-w-300 w-[90%] mx-auto pb-12">
+        <div id="favourites-section" className="max-w-300 w-[90%] mx-auto pb-12 scroll-mt-24">
           <h4 className="text-2xl font-bold mb-6">Favourites</h4>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {wishlist?.items.map((item) => (

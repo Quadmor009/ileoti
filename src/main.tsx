@@ -26,6 +26,14 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
             token: {
               colorPrimary: "#80011D",
             },
+            components: {
+              Modal: {
+                contentBg: "#ffffff",
+                headerBg: "#ffffff",
+                footerBg: "#ffffff",
+                titleColor: "rgba(0,0,0,0.88)",
+              },
+            },
           }}
         >
           <App />
