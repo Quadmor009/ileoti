@@ -7,6 +7,7 @@
 import Cookies from "js-cookie";
 import api from "../lib/api";
 import { getApiErrorMessage } from "../lib/api-error";
+import { savePathForOAuthReturn } from "../lib/post-login-redirect";
 import type { AuthUser } from "../store/auth.store";
 import { useAuthStore } from "../store/auth.store";
 
@@ -113,6 +114,7 @@ export async function logout(): Promise<void> {
 }
 
 export function initiateGoogleLogin(): void {
+  savePathForOAuthReturn();
   const raw = import.meta.env.VITE_BASE_URL;
   if (!raw) {
     throw new Error("VITE_BASE_URL is not set");

@@ -13,12 +13,11 @@ import GiftBoxModal from "../../components/gift-box-modal/GiftboxModal";
 import PersonalMessageModal from "../../components/gift-box-modal/PersonalMessageModal";
 import { useQuery } from "@tanstack/react-query";
 import { productService } from "../../services/product.service";
-import { effectivePrice, primaryImage } from "../../lib/format";
 
 const DEFAULT_CATEGORY_TABS = ["Cognac", "Gin", "Pineau", "Whiskey"];
 
 const Products = () => {
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [currentPage, setCurrentPage] = useState(1);
   const [search, setSearch] = useState(() => searchParams.get("search") ?? "");
   const [searchQuery, setSearchQuery] = useState(() => searchParams.get("search") ?? "");
@@ -30,6 +29,25 @@ const Products = () => {
   const [addPersonalMessage, setAddPersonalMessage] = useState(false);
   const [giftMessage, setGiftMessage] = useState("");
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const buildGiftBoxHandled = useRef(false);
+
+  useEffect(() => {
+    if (searchParams.get("buildGiftBox") !== "1") {
+      buildGiftBoxHandled.current = false;
+      return;
+    }
+    if (buildGiftBoxHandled.current) return;
+    buildGiftBoxHandled.current = true;
+    setOpenGiftBoxTwo(true);
+    setSearchParams(
+      (prev) => {
+        const next = new URLSearchParams(prev);
+        next.delete("buildGiftBox");
+        return next;
+      },
+      { replace: true },
+    );
+  }, [searchParams, setSearchParams]);
 
   useEffect(() => {
     const q = searchParams.get("search") ?? "";
@@ -309,20 +327,7 @@ const Products = () => {
         open={openGiftBoxTwo}
         setOpen={setOpenGiftBoxTwo}
         personalMessage={giftMessage}
-        initialProduct={
-          products[0]
-            ? {
-                productId: products[0].id,
-                name: products[0].name,
-                category: products[0].category?.name ?? "—",
-                price: effectivePrice(products[0]),
-                image: primaryImage(
-                  products[0].images,
-                  ImagesAndIcons.furasgnBottle,
-                ),
-              }
-            : undefined
-        }
+        initialProduct={undefined}
       />
       <PersonalMessageModal
         open={addPersonalMessage}

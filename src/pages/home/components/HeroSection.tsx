@@ -30,7 +30,7 @@ const HeroSection = () => {
             <Button
               type="transparent"
               label="Build A Box"
-              handleClick={() => navigate(routes.contact)}
+              handleClick={() => navigate(`${routes.products}?buildGiftBox=1`)}
             />
           </div>
         </div>

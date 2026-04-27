@@ -155,7 +155,14 @@ const GiftBoxModal = ({
             </span>
           </div>
 
-          <div className="flex items-center lato gap-4 overflow-auto no-scrollbar my-6">
+          <div className="flex items-center lato gap-4 overflow-auto no-scrollbar my-6 min-h-[120px]">
+            {items.length === 0 ? (
+              <p className="w-full text-center text-[#585858] text-sm py-6 px-2">
+                Your box is empty. Close this and add products from the grid, or use{" "}
+                <span className="font-semibold text-[#80011D]">Shop More Items</span> below
+                to keep browsing.
+              </p>
+            ) : null}
             {items.map((item) => (
               <div
                 key={item.productId}

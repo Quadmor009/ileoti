@@ -1,10 +1,13 @@
 import { Input, Modal, message } from "antd";
 
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { ImagesAndIcons } from "../../shared/images-icons/ImagesAndIcons";
 import Button from "../../components/btns/Button";
+import { OauthLogoSlot } from "../../components/auth/OauthLogoSlot";
 import { verifyOtp, initiateGoogleLogin } from "../../services/auth.service";
 import { getApiErrorMessage } from "../../lib/api-error";
+import { useLoginModalStore } from "../../store/login-modal.store";
 
 interface OtpLoginProps {
   isModalOpen: boolean;
@@ -13,6 +16,7 @@ interface OtpLoginProps {
 }
 
 const OtpLogin = ({ isModalOpen, handleCancel, email }: OtpLoginProps) => {
+  const navigate = useNavigate();
   const [otp, setOtp] = useState("");
   const [otpError, setOtpError] = useState<string | null>(null);
   const [verifyLoading, setVerifyLoading] = useState(false);
@@ -31,8 +35,14 @@ const OtpLogin = ({ isModalOpen, handleCancel, email }: OtpLoginProps) => {
     try {
       await verifyOtp(email, otp);
       void message.success("Signed in successfully.");
+      const raw = useLoginModalStore.getState().postLoginRedirect;
+      useLoginModalStore.getState().clearPostLoginRedirect();
+      const to =
+        raw && raw !== "/auth/callback" && !raw.includes("error=oauth_failed")
+          ? raw
+          : "/";
       handleCancel();
-      window.location.assign("/");
+      navigate(to, { replace: true });
     } catch {
       setOtpError("Invalid or expired code");
     } finally {
@@ -108,14 +118,7 @@ const OtpLogin = ({ isModalOpen, handleCancel, email }: OtpLoginProps) => {
           handleClick={() => void handleVerify()}
         />
         <div className="flex items-center justify-center">
-          <button
-            type="button"
-            className="w-[145px] h-[58px]  rounded-[22px] bg-[#D9D9D9]"
-            onClick={handleGoogle}
-            aria-label="Continue with Google"
-          >
-            {" "}
-          </button>
+          <OauthLogoSlot onClick={handleGoogle} ariaLabel="Continue with Google" />
         </div>
       </div>
     </Modal>

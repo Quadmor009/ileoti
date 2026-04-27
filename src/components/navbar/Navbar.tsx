@@ -221,7 +221,7 @@ const Navbar = () => {
         <img
           src="/logos/red-logo.svg"
           alt=""
-          className="h-10 md:h-11 w-auto max-h-14 max-w-[200px] object-contain"
+          className="h-12 w-auto max-h-[64px] md:h-[52px] max-w-[220px] object-contain"
         />
       </Link>
       {isLoggedIn ? (

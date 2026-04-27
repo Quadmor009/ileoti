@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { fetchProfile } from "../../services/auth.service";
 import { useAuthStore } from "../../store/auth.store";
 import api from "../../lib/api";
+import { takePathForOAuthReturn } from "../../lib/post-login-redirect";
 
 export default function AuthCallback() {
   const navigate = useNavigate();
@@ -18,6 +19,7 @@ export default function AuthCallback() {
     }
 
     const run = async () => {
+      const returnTo = takePathForOAuthReturn();
       useAuthStore.getState().setAuth(token, null);
       try {
         // Auto-verify age on login - user confirmed age via the frontend modal
@@ -29,7 +31,7 @@ export default function AuthCallback() {
       } catch {
         // Access token is still valid; user can retry loading profile later.
       }
-      navigate("/", { replace: true });
+      navigate(returnTo, { replace: true });
     };
 
     void run();

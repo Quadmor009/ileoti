@@ -1,6 +1,9 @@
 import { Modal, message } from "antd";
 import { useState } from "react";
+import { useLocation } from "react-router-dom";
 import { ImagesAndIcons } from "../../shared/images-icons/ImagesAndIcons";
+import { OauthLogoSlot } from "../../components/auth/OauthLogoSlot";
+import { useLoginModalStore } from "../../store/login-modal.store";
 import CustomInput from "../../components/input/CustomInput";
 import Button from "../../components/btns/Button";
 import OtpLogin from "./OtpLogin";
@@ -8,6 +11,8 @@ import { sendOtp, initiateGoogleLogin } from "../../services/auth.service";
 import { getApiErrorMessage } from "../../lib/api-error";
 
 const SignUp = () => {
+  const location = useLocation();
+  const setPostLoginRedirect = useLoginModalStore((s) => s.setPostLoginRedirect);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isModalOpenTwo, setIsModalOpenTwo] = useState(false);
   const [email, setEmail] = useState("");
@@ -49,7 +54,11 @@ const SignUp = () => {
   return (
     <div>
       <button
-        onClick={() => setIsModalOpen(true)}
+        type="button"
+        onClick={() => {
+          setPostLoginRedirect(`${location.pathname}${location.search}`);
+          setIsModalOpen(true);
+        }}
         className="text-xl font-medium text-black"
       >
         Sign Up
@@ -97,14 +106,7 @@ const SignUp = () => {
             handleClick={() => void handleSendOtp()}
           />
           <div className="flex items-center justify-center">
-            <button
-              type="button"
-              className="w-[145px] h-[58px]  rounded-[22px] bg-[#D9D9D9]"
-              onClick={handleGoogle}
-              aria-label="Continue with Google"
-            >
-              {" "}
-            </button>
+            <OauthLogoSlot onClick={handleGoogle} ariaLabel="Continue with Google" />
           </div>
         </div>
       </Modal>

@@ -211,12 +211,14 @@ const ProductCard = ({ product }: ProductCardProps) => {
       <p className="text-[10px] lg:text-xs mb-0.5 text-[#585858] font-medium">
         {product.category?.name ?? "—"}
       </p>
-      <div className="mb-0.5 flex items-center gap-2">
-        <Rate disabled value={avgRating} allowHalf />
-        <p className="text-[10px] lg:text-xs text-[#585858] font-medium">
-          {product.reviews?.length ?? 0} Reviews
-        </p>
-      </div>
+      {(product.reviews?.length ?? 0) > 0 ? (
+        <div className="mb-0.5 flex items-center gap-2">
+          <Rate disabled value={avgRating} allowHalf />
+          <p className="text-[10px] lg:text-xs text-[#585858] font-medium">
+            {product.reviews?.length} Reviews
+          </p>
+        </div>
+      ) : null}
       <div className="flex items-center gap-2 mb-3">
         <p className="text-sm lg:text-xl font-medium text-black">{formatNGN(sellingPrice)}</p>
       </div>

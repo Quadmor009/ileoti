@@ -63,7 +63,7 @@ const Footer = () => {
             <img
               src="/logos/white-logo.svg"
               alt=""
-              className="h-14 md:h-16 w-auto max-w-[220px] object-contain mx-auto"
+              className="h-16 md:h-[72px] w-auto max-w-[240px] object-contain mx-auto"
             />
           </Link>
           <ul className="text-xs font-semibold space-y-3">

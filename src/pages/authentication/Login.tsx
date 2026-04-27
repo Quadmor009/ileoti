@@ -1,6 +1,8 @@
 import { Modal, message } from "antd";
 import { useEffect, useRef, useState } from "react";
+import { useLocation } from "react-router-dom";
 import { ImagesAndIcons } from "../../shared/images-icons/ImagesAndIcons";
+import { OauthLogoSlot } from "../../components/auth/OauthLogoSlot";
 import CustomInput from "../../components/input/CustomInput";
 import Button from "../../components/btns/Button";
 import OtpLogin from "./OtpLogin";
@@ -13,6 +15,8 @@ import { getApiErrorMessage } from "../../lib/api-error";
 import { useLoginModalStore } from "../../store/login-modal.store";
 
 const Login = () => {
+  const location = useLocation();
+  const setPostLoginRedirect = useLoginModalStore((s) => s.setPostLoginRedirect);
   const openSignal = useLoginModalStore((s) => s.openSignal);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isModalOpenTwo, setIsModalOpenTwo] = useState(false);
@@ -63,7 +67,11 @@ const Login = () => {
   return (
     <div>
       <button
-        onClick={() => setIsModalOpen(true)}
+        type="button"
+        onClick={() => {
+          setPostLoginRedirect(`${location.pathname}${location.search}`);
+          setIsModalOpen(true);
+        }}
         className="rounded-[100px] h-14 bg-[#80011D] text-base font-medium text-white px-[45px] hover:bg-[#66001D]"
       >
         Log In
@@ -111,14 +119,7 @@ const Login = () => {
             handleClick={() => void handleSendOtp()}
           />
           <div className="flex items-center justify-center">
-            <button
-              type="button"
-              className="w-[145px] h-[58px]  rounded-[22px] bg-[#D9D9D9]"
-              onClick={handleGoogle}
-              aria-label="Continue with Google"
-            >
-              {" "}
-            </button>
+            <OauthLogoSlot onClick={handleGoogle} ariaLabel="Continue with Google" />
           </div>
         </div>
       </Modal>
