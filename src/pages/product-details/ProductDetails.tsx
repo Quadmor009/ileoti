@@ -34,8 +34,9 @@ export default function ProductDetailsPage() {
   const [quantity, setQuantity] = useState(1);
   const [wishlisted, setWishlisted] = useState(false);
   const isAuthenticated = useAuthStore((s) => Boolean(s.accessToken));
-  const requestLogin = useLoginModalStore((s) => s.requestLogin);
   const setCart = useCartStore((s) => s.setCart);
+  const addGuestItem = useCartStore((s) => s.addGuestItem);
+  const requestLogin = useLoginModalStore((s) => s.requestLogin);
   const qc = useQueryClient();
 
   const { data: product, isLoading, isError } = useQuery({
@@ -79,7 +80,15 @@ export default function ProductDetailsPage() {
 
   const handleAddToCart = () => {
     if (!isAuthenticated) {
-      requestLogin();
+      addGuestItem({
+        productId: id!,
+        name: product!.name,
+        price: sellPrice,
+        image: primaryImage(product!.images, ImagesAndIcons.furasgnBottle),
+        quantity,
+        category: product!.category?.name,
+      });
+      void message.success("Added to cart");
       return;
     }
     addToCartMutation.mutate({ productId: id!, qty: quantity });
@@ -87,7 +96,15 @@ export default function ProductDetailsPage() {
 
   const handleBuyNow = () => {
     if (!isAuthenticated) {
-      requestLogin();
+      addGuestItem({
+        productId: id!,
+        name: product!.name,
+        price: sellPrice,
+        image: primaryImage(product!.images, ImagesAndIcons.furasgnBottle),
+        quantity,
+        category: product!.category?.name,
+      });
+      navigate(routes.cart);
       return;
     }
     addToCartMutation.mutate(
@@ -193,7 +210,15 @@ export default function ProductDetailsPage() {
                         onClick={(e) => {
                           e.stopPropagation();
                           if (!isAuthenticated) {
-                            requestLogin();
+                            addGuestItem({
+                              productId: p.id,
+                              name: p.name,
+                              price: Number(p.discountedPrice ?? p.price),
+                              image: primaryImage(p.images, ImagesAndIcons.furasgnBottle),
+                              quantity: 1,
+                              category: p.category?.name,
+                            });
+                            void message.success("Added to cart");
                             return;
                           }
                           addToCartMutation.mutate({ productId: p.id, qty: 1 });

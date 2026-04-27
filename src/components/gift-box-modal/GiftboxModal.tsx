@@ -5,7 +5,7 @@ import { ImagesAndIcons } from "../../shared/images-icons/ImagesAndIcons";
 import { createGiftBox } from "../../services/giftbox.service";
 import { getApiErrorMessage } from "../../lib/api-error";
 import { useAuthStore } from "../../store/auth.store";
-import { useLoginModalStore } from "../../store/login-modal.store";
+import { useCartStore } from "../../store/cart.store";
 import { formatNGN } from "../../lib/format";
 
 export type GiftBoxProductSeed = {
@@ -45,7 +45,7 @@ const GiftBoxModal = ({
   onCheckout,
 }: giftBoxModalProps) => {
   const isAuthed = useAuthStore((s) => Boolean(s.accessToken));
-  const requestLogin = useLoginModalStore((s) => s.requestLogin);
+  const addGuestItem = useCartStore((s) => s.addGuestItem);
   const [items, setItems] = useState<GiftItem[]>([]);
   const [submitting, setSubmitting] = useState(false);
 
@@ -91,8 +91,18 @@ const GiftBoxModal = ({
       return;
     }
     if (!isAuthed) {
-      requestLogin();
-      void message.warning("Please log in to create a gift box.");
+      items.forEach((item) => {
+        addGuestItem({
+          productId: item.productId,
+          name: item.name,
+          price: item.price,
+          image: item.image,
+          quantity: item.quantity,
+          category: item.category,
+        });
+      });
+      void message.success("Gift box items added to cart");
+      setOpen(false);
       return;
     }
     if (items.length === 0) {

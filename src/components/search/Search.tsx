@@ -9,9 +9,9 @@ interface searchType {
 
 const Search = ({placeholder, value, onChange, className}: searchType) => {
   return (
-    <div className='border border-[#D8D8D8] rounded-3xl flex items-center gap-2 lg:w-75 px-4 py-3 '>
+    <div className='border border-[#D8D8D8] rounded-full flex items-center gap-2 lg:w-75 px-4 h-14'>
       <img src={ImagesAndIcons.search} alt="" />
-      <input type="text" className={`outline-none flex-auto ${className}`} placeholder={placeholder} value={value} onChange={onChange}/>
+      <input type="text" className={`outline-none flex-auto text-base ${className}`} placeholder={placeholder} value={value} onChange={onChange}/>
     </div>
   )
 }

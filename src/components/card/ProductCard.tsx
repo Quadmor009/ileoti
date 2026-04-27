@@ -7,7 +7,6 @@ import { useNavigate } from "react-router-dom";
 import { routes } from "../../shared/routes/routes";
 import { formatNGN, primaryImage } from "../../lib/format";
 import { useAuthStore } from "../../store/auth.store";
-import { useLoginModalStore } from "../../store/login-modal.store";
 import { cartService } from "../../services/cart.service";
 import { useCartStore } from "../../store/cart.store";
 import { getApiErrorMessage } from "../../lib/api-error";
@@ -33,7 +32,6 @@ interface ProductCardProps {
 const ProductCard = ({ product }: ProductCardProps) => {
   const navigate = useNavigate();
   const user = useAuthStore((s) => s.user);
-  const requestLogin = useLoginModalStore((s) => s.requestLogin);
   const setCart = useCartStore((s) => s.setCart);
   const addGuestItem = useCartStore((s) => s.addGuestItem);
   const removeGuestItem = useCartStore((s) => s.removeGuestItem);
@@ -75,7 +73,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
   const handleWishlistClick = async (e: MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
     if (!isLoggedIn) {
-      requestLogin();
+      void message.info("Please log in to use wishlist.");
       return;
     }
     try {
@@ -88,10 +86,6 @@ const ProductCard = ({ product }: ProductCardProps) => {
 
   const handleGiftBoxClick = (e: MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
-    if (!isLoggedIn) {
-      requestLogin();
-      return;
-    }
     setGiftBoxOpen(true);
   };
 
@@ -219,14 +213,14 @@ const ProductCard = ({ product }: ProductCardProps) => {
         {quantity === 0 ? (
           <button
             onClick={(e) => void handleAddToCartClick(e, 1)}
-            className="flex-1 h-14 text-xs text-white bg-primary rounded-[56px] px-6"
+            className="flex-1 h-14 text-base text-white bg-primary rounded-[56px] px-6"
             disabled={addToCartMutation.isPending}
           >
             Add To Cart
           </button>
         ) : (
           <div
-            className="flex-1 h-14 rounded-[56px] border border-[#80011D] flex items-center justify-between px-4"
+            className="flex-1 h-14 rounded-[56px] border border-[#80011D] flex items-center justify-center gap-10"
             onClick={(e) => e.stopPropagation()}
           >
             <button

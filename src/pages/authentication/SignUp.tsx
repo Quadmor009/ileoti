@@ -50,7 +50,7 @@ const SignUp = () => {
     <div>
       <button
         onClick={() => setIsModalOpen(true)}
-        className="text-xl font-bold text-black"
+        className="text-xl font-medium text-black"
       >
         Sign Up
       </button>

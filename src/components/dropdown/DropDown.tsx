@@ -28,7 +28,7 @@ const DropDown = (props: DeviceGadgetActionProps) => {
         background: "red"
       }}
     >
-      <button className="border border-[#D8D8D8] text-black flex items-center gap-1 bg-transparent  cursor-pointer p-4 text-xs font-medium rounded-3xl">
+      <button className="border border-[#D8D8D8] text-black flex items-center gap-1 bg-transparent cursor-pointer p-4 text-base font-medium rounded-full">
         {props.btnLabel} <img src={props.icons} alt="" />
       </button>
     </Popover>

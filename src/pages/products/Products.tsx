@@ -259,7 +259,7 @@ const Products = () => {
               setCurrentPage(1);
             }}
             placeholder="Search products..."
-            className="border border-[#D9D9D9] rounded-full px-4 py-2 text-sm w-full lg:w-64 outline-none focus:border-primary"
+            className="border border-[#D9D9D9] rounded-full px-4 h-14 text-base w-full lg:w-64 outline-none focus:border-primary"
           />
         </div>
         <div className="w-38">
@@ -267,7 +267,7 @@ const Products = () => {
             type="red"
             icon={ImagesAndIcons.giftboxWhite}
             label="Gift Box"
-            className="py-2 md:py-[14px] text-xs font-medium rounded-3xl"
+            className="py-2 md:py-[14px] text-base font-medium rounded-3xl"
             handleClick={() => setOpenGiftBox(true)}
           />
         </div>

@@ -166,7 +166,7 @@ const Navbar = () => {
     <div className="sticky top-0 z-50 bg-white shadow-sm w-full">
       <nav className="max-w-[1300px] mx-auto px-6 py-5 lato hidden lg:flex items-center justify-between">
       <div className="flex items-center gap-3">
-        <p className="text-xl font-bold lato text-black">Products</p>
+        <p className="text-xl font-medium lato text-black">Products</p>
         <form onSubmit={handleSearchSubmit} className="flex items-center gap-2">
           <Search
             placeholder="Search any drink or Brand here..."
@@ -177,7 +177,7 @@ const Navbar = () => {
       </div>
       {isLoggedIn ? (
         <div className="flex items-center gap-7">
-          <p className="text-xl font-bold text-black">Contact Us</p>
+          <p className="text-xl font-medium text-black">Contact Us</p>
           <Dropdown dropdownRender={() => dropdownContent} trigger={["click"]}>
             <button
               type="button"
@@ -210,7 +210,7 @@ const Navbar = () => {
         </div>
       ) : (
         <div className="flex items-center gap-8">
-          <p className="text-xl font-bold text-black">Contact Us</p>
+          <p className="text-xl font-medium text-black">Contact Us</p>
           <SignUp />
           <Login />
         </div>

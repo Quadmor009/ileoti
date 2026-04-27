@@ -1,5 +1,5 @@
 import { Modal, message } from "antd";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ImagesAndIcons } from "../../shared/images-icons/ImagesAndIcons";
 import CustomInput from "../../components/input/CustomInput";
 import Button from "../../components/btns/Button";
@@ -19,11 +19,13 @@ const Login = () => {
   const [email, setEmail] = useState(() => getRememberedEmail() ?? "");
   const [sendLoading, setSendLoading] = useState(false);
   const [sendError, setSendError] = useState<string | null>(null);
+  const lastHandledSignalRef = useRef(openSignal);
 
   useEffect(() => {
-    if (openSignal > 0) {
+    if (openSignal > lastHandledSignalRef.current) {
       setIsModalOpen(true);
     }
+    lastHandledSignalRef.current = openSignal;
   }, [openSignal]);
 
   const handleCancel = () => {
@@ -62,7 +64,7 @@ const Login = () => {
     <div>
       <button
         onClick={() => setIsModalOpen(true)}
-        className="rounded-lg bg-[#80011D] text-base font-medium text-white py-3.5 px-[45px] hover:bg-[#66001D]"
+        className="rounded-[100px] h-14 bg-[#80011D] text-base font-medium text-white px-[45px] hover:bg-[#66001D]"
       >
         Log In
       </button>
@@ -105,7 +107,7 @@ const Login = () => {
           <Button
             type="red"
             label={sendLoading ? "Sending…" : "Log In"}
-            className="font-semibold  rounded-[55px] py-6 text-xl my-11"
+            className="font-semibold rounded-[100px] h-14 text-xl my-11"
             handleClick={() => void handleSendOtp()}
           />
           <div className="flex items-center justify-center">
