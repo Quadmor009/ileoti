@@ -526,6 +526,7 @@ export default function ProductDetailsPage() {
       <PersonalMessageModal
         open={personalMessageOpen}
         setOpen={setPersonalMessageOpen}
+        initialDraft={giftMessage}
         onSubmitMessage={(msg) => setGiftMessage(msg)}
       />
     </div>

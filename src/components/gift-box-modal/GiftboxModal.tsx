@@ -248,10 +248,20 @@ const GiftBoxModal = ({
           <span className="font-bold">{formatNGN(total)}</span>
         </div>
         <div className="flex flex-col gap-4">
+          {personalMessage?.trim() ? (
+            <div className="rounded-xl border border-[#80011D]/30 bg-[#FDF6F7] px-4 py-3 text-left">
+              <p className="text-xs font-semibold uppercase tracking-wide text-[#80011D] mb-1">
+                Personal message
+              </p>
+              <p className="text-sm text-[#333] whitespace-pre-wrap line-clamp-4">{personalMessage.trim()}</p>
+            </div>
+          ) : null}
           <Button
-            label="Add personal message"
-            type="outlineRed"
-            className="py-6 text-xl rounded-[55px] font-semibold"
+            label={personalMessage?.trim() ? "Edit personal message" : "Add personal message"}
+            type={personalMessage?.trim() ? "lightRed" : "outlineRed"}
+            className={`py-6 text-xl rounded-[55px] font-semibold ${
+              personalMessage?.trim() ? "ring-2 ring-[#80011D]/30" : ""
+            }`}
             icon={ImagesAndIcons.messages}
             handleClick={handleAddPersonalMessage}
           />

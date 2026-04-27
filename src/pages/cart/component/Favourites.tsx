@@ -168,7 +168,7 @@ const FavouritesDropDown = () => {
         <img
           src={ImagesAndIcons.lovelyRed}
           alt=""
-          className="h-8 w-8 object-contain drop-shadow-sm scale-90"
+          className="h-7 w-7 object-contain brightness-0 invert drop-shadow-sm"
           aria-hidden
         />
       </button>

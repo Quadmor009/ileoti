@@ -8,12 +8,15 @@ interface PersonalMessageModalProps {
   open: boolean;
   setOpen: Dispatch<SetStateAction<boolean>>;
   onSubmitMessage?: (message: string) => void;
+  /** When reopening to edit, pre-fill the main message field */
+  initialDraft?: string;
 }
 
 const PersonalMessageModal = ({
   open,
   setOpen,
   onSubmitMessage,
+  initialDraft = "",
 }: PersonalMessageModalProps) => {
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
@@ -22,11 +25,18 @@ const PersonalMessageModal = ({
 
   useEffect(() => {
     if (!open) return;
+    if (initialDraft.trim()) {
+      setTitle("");
+      setBody(initialDraft);
+      setRecipient("");
+      setSender("");
+      return;
+    }
     setTitle("");
     setBody("");
     setRecipient("");
     setSender("");
-  }, [open]);
+  }, [open, initialDraft]);
 
   const handleSubmit = () => {
     const parts = [
@@ -55,7 +65,7 @@ const PersonalMessageModal = ({
       centered
       closable={false}
     >
-      <div className="p-10 lato">
+      <div className="p-5 sm:p-8 md:p-10 lato w-full max-w-full min-w-0">
         <div className="flex items-center justify-between">
           <h2 className="text-2xl font-semibold flex items-center gap-2">
             <img src={ImagesAndIcons.giftBox} alt="" /> Personal message
@@ -69,22 +79,26 @@ const PersonalMessageModal = ({
           complete checkout.
         </p>
 
-        <div className="flex flex-col gap-2 mb-8">
+        <div className="flex flex-col gap-2 mb-8 w-full min-w-0">
           <CustomInput
             label="Message title (optional)"
             placeholder="E.g. Happy birthday"
             value={title}
             onChange={(e: ChangeEvent<HTMLInputElement>) => setTitle(e.target.value)}
           />
-          <div className="flex flex-col gap-1.5 w-full">
-            <label className="text-sm font-bold text-primary">Message</label>
+          <div className="flex flex-col gap-1.5 w-full min-w-0 max-w-full">
+            <label className="text-sm font-bold text-primary" htmlFor="personal-message-body">
+              Message
+            </label>
             <Input.TextArea
+              id="personal-message-body"
               placeholder="Write your message"
               value={body}
               onChange={(e) => setBody(e.target.value)}
-              rows={4}
-              className="!rounded-2xl !px-3 !py-2 !text-base"
-              autoSize={{ minRows: 4, maxRows: 8 }}
+              rows={5}
+              className="!rounded-2xl !px-3 !py-2.5 !text-base !w-full !max-w-full !min-w-0"
+              style={{ width: "100%", maxWidth: "100%" }}
+              autoSize={{ minRows: 5, maxRows: 12 }}
             />
           </div>
           <CustomInput

@@ -131,7 +131,7 @@ const Cart = () => {
   return (
     <section>
       <Navbar />
-      <div className="max-w-300 w-[90%] flex flex-col-reverse lg:flex-row mx-auto gap-12 pt-12 pb-20">
+      <div className="max-w-300 w-[90%] flex flex-col lg:flex-row mx-auto gap-12 pt-12 pb-20">
         <div className="w-full lg:w-180 flex-col flex gap-6">
           <h4 className="text-3xl font-bold">Cart</h4>
 
