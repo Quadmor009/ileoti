@@ -1,6 +1,8 @@
 export const routes = {
     home: '/',
     products: '/products',
+    /** Themed listing from “Explore our world” (slug → category when possible). */
+    shopExplore: '/shop/:slug',
     productsDetails: '/products/:id',
     about: '/about',
     contact: '/contact-us',

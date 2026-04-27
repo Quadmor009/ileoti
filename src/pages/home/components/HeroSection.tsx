@@ -7,7 +7,7 @@ const HeroSection = () => {
   const navigate = useNavigate();
   return (
     <div
-      className="lato min-h-[75vh] sm:min-h-0 py-24 sm:py-20 md:py-32 lg:py-50 flex items-center"
+      className="lato py-12 sm:py-20 md:py-32 lg:py-50"
       style={{
         backgroundImage: `url(${ImagesAndIcons.heroImage})`,
         backgroundSize: "cover",

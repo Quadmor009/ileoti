@@ -3,11 +3,11 @@ export function OauthLogoSlot({ onClick, ariaLabel }: { onClick: () => void; ari
   return (
     <button
       type="button"
-      className="bg-transparent border-0 shadow-none outline-none flex items-center justify-center p-0"
+      className="w-[180px] h-[72px] rounded-[22px] bg-transparent border-0 shadow-none flex items-center justify-center px-4"
       onClick={onClick}
       aria-label={ariaLabel}
     >
-      <img src="/logos/red-logo.svg" alt="" className="h-20 w-auto object-contain" />
+      <img src="/logos/red-logo.svg" alt="" className="h-[3.25rem] w-auto max-h-[4.5rem] object-contain" />
     </button>
   );
 }

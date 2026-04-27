@@ -60,7 +60,6 @@ const Navbar = () => {
   const isLoggedIn = Boolean(accessToken);
   const setCart = useCartStore((s) => s.setCart);
   const [searchDraft, setSearchDraft] = useState("");
-  const [drawerOpen, setDrawerOpen] = useState(false);
 
   useEffect(() => {
     if (!isLoggedIn) return;
@@ -178,129 +177,6 @@ const Navbar = () => {
 
   return (
     <div className="sticky top-0 z-50 bg-white shadow-sm w-full">
-      {/* ── Mobile navbar ── */}
-      <div className="flex lg:hidden items-center justify-between px-4 py-3">
-        <button
-          type="button"
-          aria-label="Open menu"
-          className="flex flex-col justify-center gap-[5px] w-10 h-10 p-1"
-          onClick={() => setDrawerOpen(true)}
-        >
-          <span className="block h-0.5 w-6 bg-black rounded" />
-          <span className="block h-0.5 w-6 bg-black rounded" />
-          <span className="block h-0.5 w-6 bg-black rounded" />
-        </button>
-        <Link to={routes.home} aria-label="Ile Oti home">
-          <img src="/logos/red-logo.svg" alt="" className="h-12 w-auto object-contain" />
-        </Link>
-        <div className="flex items-center gap-3">
-          {isLoggedIn ? (
-            <>
-              <FavouritesDropDown />
-              <CartDropDown />
-            </>
-          ) : (
-            <Login />
-          )}
-        </div>
-      </div>
-
-      {/* ── Mobile drawer ── */}
-      {drawerOpen && (
-        <div className="fixed inset-0 z-[100] flex lg:hidden">
-          {/* Backdrop */}
-          <div
-            className="absolute inset-0 bg-black/50"
-            onClick={() => setDrawerOpen(false)}
-          />
-          {/* Panel */}
-          <div className="relative bg-white w-[80%] max-w-xs h-full flex flex-col shadow-xl">
-            <div className="flex items-center justify-between px-5 py-4 border-b border-[#F0F0F0]">
-              <img src="/logos/red-logo.svg" alt="" className="h-10 w-auto object-contain" />
-              <button
-                type="button"
-                aria-label="Close menu"
-                className="w-9 h-9 flex items-center justify-center rounded-full hover:bg-[#FFF5F5]"
-                onClick={() => setDrawerOpen(false)}
-              >
-                <span className="text-xl leading-none">✕</span>
-              </button>
-            </div>
-            <div className="px-5 py-4">
-              <form
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  const q = searchDraft.trim();
-                  navigate(q ? `${routes.products}?search=${encodeURIComponent(q)}` : routes.products);
-                  setDrawerOpen(false);
-                }}
-              >
-                <Search
-                  placeholder="Search drinks or brands..."
-                  value={searchDraft}
-                  onChange={(e) => setSearchDraft(e.target.value)}
-                />
-              </form>
-            </div>
-            <nav className="flex-1 overflow-y-auto px-5 py-2 flex flex-col gap-1">
-              <Link
-                to={routes.home}
-                className="py-3 text-sm font-medium text-black border-b border-[#F5F5F5] hover:text-[#80011D]"
-                onClick={() => setDrawerOpen(false)}
-              >
-                Home
-              </Link>
-              <button
-                type="button"
-                className="py-3 text-sm font-medium text-black border-b border-[#F5F5F5] text-left hover:text-[#80011D]"
-                onClick={() => { navigate(routes.products); setDrawerOpen(false); }}
-              >
-                Products
-              </button>
-              <Link
-                to={routes.about}
-                className="py-3 text-sm font-medium text-black border-b border-[#F5F5F5] hover:text-[#80011D]"
-                onClick={() => setDrawerOpen(false)}
-              >
-                About
-              </Link>
-              <Link
-                to={routes.contact}
-                className="py-3 text-sm font-medium text-black border-b border-[#F5F5F5] hover:text-[#80011D]"
-                onClick={() => setDrawerOpen(false)}
-              >
-                Contact Us
-              </Link>
-              {isLoggedIn && (
-                <>
-                  <Link
-                    to={routes.orders}
-                    className="py-3 text-sm font-medium text-black border-b border-[#F5F5F5] hover:text-[#80011D]"
-                    onClick={() => setDrawerOpen(false)}
-                  >
-                    My Orders
-                  </Link>
-                  <Link
-                    to={routes.profile}
-                    className="py-3 text-sm font-medium text-black border-b border-[#F5F5F5] hover:text-[#80011D]"
-                    onClick={() => setDrawerOpen(false)}
-                  >
-                    My Profile
-                  </Link>
-                </>
-              )}
-            </nav>
-            {!isLoggedIn && (
-              <div className="px-5 py-5 border-t border-[#F0F0F0] flex flex-col gap-3">
-                <SignUp />
-                <Login />
-              </div>
-            )}
-          </div>
-        </div>
-      )}
-
-      {/* ── Desktop navbar ── */}
       <nav className="max-w-[1300px] mx-auto px-6 py-4 lato hidden lg:grid lg:grid-cols-[1fr_auto_1fr] lg:items-center lg:gap-4">
       <div className="flex items-center gap-6 lg:gap-8 justify-self-start min-w-0">
         <Dropdown

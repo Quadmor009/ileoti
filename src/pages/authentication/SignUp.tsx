@@ -59,7 +59,7 @@ const SignUp = () => {
           setPostLoginRedirect(`${location.pathname}${location.search}`);
           setIsModalOpen(true);
         }}
-        className="border border-[#80011D] text-[#80011D] rounded-[100px] px-6 h-10 text-sm font-medium hover:bg-[#80011D] hover:text-white transition-colors"
+        className="text-xl font-medium text-black"
       >
         Sign Up
       </button>
@@ -82,11 +82,11 @@ const SignUp = () => {
         }}
         styles={{ content: { background: "#fff", borderRadius: 24 } }}
       >
-        <div className="py-6 px-5 sm:py-9 sm:px-8 lato">
-          <div className="flex mb-6 sm:mb-10 items-center justify-between">
-            <h2 className="text-xl sm:text-2xl font-semibold">Sign Up</h2>
-            <button onClick={handleCancel} className="p-1 shrink-0">
-              <img src={ImagesAndIcons.xIcon} alt="Close" />
+        <div className="py-9 lato px-8">
+          <div className="flex mb-11 items-center justify-between ">
+            <h2 className="text-2xl font-semibold mb-2">Sign Up</h2>
+            <button onClick={handleCancel}>
+              <img src={ImagesAndIcons.xIcon} alt="" />
             </button>
           </div>
           <CustomInput
@@ -103,10 +103,10 @@ const SignUp = () => {
           <Button
             type="red"
             label={sendLoading ? "Sending…" : "Sign Up"}
-            className="font-semibold rounded-[55px] py-6 text-sm my-6 sm:my-10"
+            className="font-semibold  rounded-[55px] py-6 text-xl my-11"
             handleClick={() => void handleSendOtp()}
           />
-          <div className="flex items-center justify-center pb-2">
+          <div className="flex items-center justify-center">
             <OauthLogoSlot onClick={handleGoogle} ariaLabel="Continue with Google" />
           </div>
         </div>

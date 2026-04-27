@@ -6,32 +6,12 @@ import { routes } from "../../shared/routes/routes";
 const Footer = () => {
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
 
-  const faqs: { question: string; answer: string }[] = [
-    {
-      question: "What age do I need to be to order?",
-      answer:
-        "You must be 18 years or older to purchase alcohol on Ile-Oti. Age verification is required at checkout and upon delivery.",
-    },
-    {
-      question: "How long does delivery take?",
-      answer:
-        "Standard delivery takes 2–4 business days. Express next-day delivery is available for orders placed before 12 PM in eligible areas.",
-    },
-    {
-      question: "Can I return or exchange a product?",
-      answer:
-        "We accept returns on damaged or incorrect items within 48 hours of delivery. Opened bottles cannot be returned due to health and safety regulations.",
-    },
-    {
-      question: "Do you offer gift packaging?",
-      answer:
-        "Yes! You can add premium gift wrapping and a personalised message to any order at checkout — perfect for celebrations and corporate gifting.",
-    },
-    {
-      question: "Are your products available for same-day delivery?",
-      answer:
-        "Same-day delivery is available in select cities for orders placed before 10 AM. Enter your postcode at checkout to check availability in your area.",
-    },
+  const faqs = [
+    "What is Ile-Oti?",
+    "What is Ile-Oti?",
+    "What is Ile-Oti?",
+    "What is Ile-Oti?",
+    "What is Ile-Oti?",
   ];
 
   const toggleFaq = (index: number) => {
@@ -56,19 +36,20 @@ const Footer = () => {
           </h2>
 
           <div className="space-y-4">
-            {faqs.map((faq, i) => (
+            {faqs.map((q, i) => (
               <div key={i}>
                 <button
                   type="button"
                   onClick={() => toggleFaq(i)}
                   className="flex justify-between items-center text-base font-medium w-full cursor-pointer text-left border-b border-gray-600 pb-2"
                 >
-                  <span>{faq.question}</span>
+                  <span>{q}</span>
                   <span>{activeIndex === i ? "−" : "+"}</span>
                 </button>
                 {activeIndex === i && (
                   <p className="text-gray-400 text-base mt-2">
-                    {faq.answer}
+                    Ile-Oti is a brand dedicated to offering premium beverages
+                    and cultural experiences.
                   </p>
                 )}
               </div>
@@ -82,7 +63,7 @@ const Footer = () => {
             <img
               src="/logos/white-logo.svg"
               alt=""
-              className="h-[88px] w-auto max-w-[240px] object-contain mx-auto"
+              className="h-16 md:h-[72px] w-auto max-w-[240px] object-contain mx-auto"
             />
           </Link>
           <ul className="text-xs font-semibold space-y-3">

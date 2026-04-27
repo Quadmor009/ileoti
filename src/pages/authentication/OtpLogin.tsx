@@ -78,48 +78,47 @@ const OtpLogin = ({ isModalOpen, handleCancel, email }: OtpLoginProps) => {
       }}
       styles={{ content: { background: "#fff", borderRadius: 24 } }}
     >
-      <div className="py-6 px-5 sm:py-9 sm:px-8 lato">
-        <div className="flex mb-4 sm:mb-5 items-center justify-between">
-          <h2 className="text-lg sm:text-2xl font-semibold">Confirm it&apos;s you</h2>
-          <button onClick={handleCancel} className="p-1 shrink-0">
-            <img src={ImagesAndIcons.xIcon} alt="Close" />
+      <div className="py-9 px-8 lato">
+        <div className="flex mb-2 items-center justify-between ">
+          <h2 className="text-2xl font-semibold mb-2">Confirm it&apos;s you</h2>
+          <button onClick={handleCancel}>
+            <img src={ImagesAndIcons.xIcon} alt="" />
           </button>
         </div>
-        <p className="text-sm sm:text-base pb-4 border-b mb-4 border-b-[#D8D8D8] text-[#9B9B9B] font-normal">
-          Enter the code sent to your email
+        <p className="text-base pb-4 border-b mb-4 border-b-[#D8D8D8] text-[#9B9B9B] font-normal">
+          Enter the code sent to your email, <br /> {email || "your email"}
         </p>
-        <div className="flex items-center mb-5 justify-between gap-2">
-          <p className="font-normal text-sm sm:text-base truncate min-w-0">{email || "—"}</p>
+        <div className="flex items-center mb-4 justify-between">
+          <p className="font-normal text-base ">{email || "—"}</p>
           <button
             type="button"
-            className="text-primary font-semibold text-sm underline shrink-0"
+            className=" text-primary font-semibold text-base underline"
             onClick={handleCancel}
           >
             Change
           </button>
         </div>
-        <div className="w-full overflow-x-auto">
-          <Input.OTP
-            length={6}
-            value={otp}
-            onChange={(v) => {
-              setOtp(v);
-              setOtpError(null);
-            }}
-          />
-        </div>
+        <Input.OTP
+          length={6}
+          value={otp}
+          onChange={(v) => {
+            setOtp(v);
+            setOtpError(null);
+          }}
+        />
         {otpError ? (
           <p className="text-sm text-red-600 mt-2" role="alert" id="otp-error">
             {otpError}
           </p>
         ) : null}
+
         <Button
           type="red"
-          label={verifyLoading ? "Verifying…" : "Verify"}
-          className="font-semibold rounded-[55px] py-6 text-sm my-6 sm:my-8"
+          label={verifyLoading ? "Verifying…" : "Sign Up"}
+          className="font-semibold  rounded-[55px] py-6 text-xl my-8"
           handleClick={() => void handleVerify()}
         />
-        <div className="flex items-center justify-center pb-2">
+        <div className="flex items-center justify-center">
           <OauthLogoSlot onClick={handleGoogle} ariaLabel="Continue with Google" />
         </div>
       </div>

@@ -46,6 +46,7 @@ function App() {
           element={<MembershipSuccess />}
         />
         <Route path={routes.home} element={<Home />} />
+        <Route path={routes.shopExplore} element={<Products />} />
         <Route path={routes.products} element={<Products />} />
         <Route path={routes.productsDetails} element={<ProductDetailsPage />} />
         <Route path={routes.checkout} element={<Checkout />} />

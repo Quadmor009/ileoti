@@ -68,7 +68,7 @@ const Home = () => {
               {Array.from({ length: 5 }).map((_, i) => (
                 <div
                   key={i}
-                  className="w-[min(66vw,225px)] sm:w-52 h-[240px] sm:h-[340px] lg:w-[246px] shrink-0 rounded-3xl bg-[#F4EEEE] animate-pulse"
+                  className="w-[min(88vw,300px)] sm:w-56 h-[320px] sm:h-[360px] lg:w-[246px] shrink-0 rounded-3xl bg-[#F4EEEE] animate-pulse"
                 />
               ))}
             </>
@@ -82,7 +82,7 @@ const Home = () => {
           {featuredProducts.map((product) => (
             <div
               key={product.id}
-              className="snap-start shrink-0 w-[min(66vw,225px)] sm:w-52 lg:w-[246px] flex h-full min-h-0"
+              className="snap-start shrink-0 w-[min(88vw,300px)] sm:w-56 lg:w-[246px] flex h-full min-h-0"
             >
               <ProductCard product={product} />
             </div>
