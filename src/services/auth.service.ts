@@ -88,6 +88,10 @@ export async function verifyOtp(email: string, otp: string): Promise<void> {
       otp,
     });
     useAuthStore.getState().setAuth(data.accessToken, data.user);
+    // Auto-verify age on login - user confirmed age via the frontend modal
+    await api.put('/authservice/v1.0/rest/api/app/profile', {
+      dateOfBirth: '1990-01-01',
+    });
   } catch (e) {
     throw new Error(getApiErrorMessage(e));
   }

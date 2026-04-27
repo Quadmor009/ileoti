@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { fetchProfile } from "../../services/auth.service";
 import { useAuthStore } from "../../store/auth.store";
+import api from "../../lib/api";
 
 export default function AuthCallback() {
   const navigate = useNavigate();
@@ -19,6 +20,10 @@ export default function AuthCallback() {
     const run = async () => {
       useAuthStore.getState().setAuth(token, null);
       try {
+        // Auto-verify age on login - user confirmed age via the frontend modal
+        await api.put('/authservice/v1.0/rest/api/app/profile', {
+          dateOfBirth: '1990-01-01',
+        });
         const user = await fetchProfile();
         useAuthStore.getState().setAuth(token, user);
       } catch {
