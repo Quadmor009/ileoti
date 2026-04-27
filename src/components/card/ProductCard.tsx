@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { routes } from "../../shared/routes/routes";
 import { formatNGN, primaryImage } from "../../lib/format";
 import { useAuthStore } from "../../store/auth.store";
+import { useLoginModalStore } from "../../store/login-modal.store";
 import { cartService } from "../../services/cart.service";
 import { useCartStore } from "../../store/cart.store";
 import { getApiErrorMessage } from "../../lib/api-error";
@@ -27,12 +28,12 @@ interface Product {
 
 interface ProductCardProps {
   product: Product;
-  onLoginRequired?: () => void;
 }
 
-const ProductCard = ({ product, onLoginRequired }: ProductCardProps) => {
+const ProductCard = ({ product }: ProductCardProps) => {
   const navigate = useNavigate();
   const user = useAuthStore((s) => s.user);
+  const requestLogin = useLoginModalStore((s) => s.requestLogin);
   const setCart = useCartStore((s) => s.setCart);
   const isLoggedIn = Boolean(user);
   const [wishlisted, setWishlisted] = useState(false);
@@ -73,7 +74,7 @@ const ProductCard = ({ product, onLoginRequired }: ProductCardProps) => {
   const handleWishlistClick = async (e: MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
     if (!isLoggedIn) {
-      onLoginRequired?.();
+      requestLogin();
       return;
     }
     try {
@@ -87,7 +88,7 @@ const ProductCard = ({ product, onLoginRequired }: ProductCardProps) => {
   const handleGiftBoxClick = (e: MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
     if (!isLoggedIn) {
-      onLoginRequired?.();
+      requestLogin();
       return;
     }
     setGiftBoxOpen(true);
@@ -96,7 +97,7 @@ const ProductCard = ({ product, onLoginRequired }: ProductCardProps) => {
   const handleAddToCartClick = (e: MouseEvent<HTMLButtonElement>, newQuantity: number) => {
     e.stopPropagation();
     if (!isLoggedIn) {
-      onLoginRequired?.();
+      requestLogin();
       return;
     }
     addToCartMutation.mutate(newQuantity);
@@ -105,7 +106,7 @@ const ProductCard = ({ product, onLoginRequired }: ProductCardProps) => {
   const handleDecrement = async (e: MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
     if (!isLoggedIn) {
-      onLoginRequired?.();
+      requestLogin();
       return;
     }
     if (addToCartMutation.isPending) return;
@@ -126,7 +127,7 @@ const ProductCard = ({ product, onLoginRequired }: ProductCardProps) => {
   const handleIncrement = async (e: MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
     if (!isLoggedIn) {
-      onLoginRequired?.();
+      requestLogin();
       return;
     }
     if (addToCartMutation.isPending) return;

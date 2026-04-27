@@ -279,7 +279,7 @@ export default function ProductDetailsPage() {
               <div className="flex gap-4 overflow-x-auto">
                 {relatedProducts.map((p) => (
                   <div key={p.id}>
-                    <ProductCard product={p} onLoginRequired={requestLogin} />
+                    <ProductCard product={p} />
                   </div>
                 ))}
               </div>

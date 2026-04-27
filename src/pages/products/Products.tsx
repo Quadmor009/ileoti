@@ -21,7 +21,7 @@ const Products = () => {
   const [searchParams] = useSearchParams();
   const [currentPage, setCurrentPage] = useState(1);
   const [search, setSearch] = useState(() => searchParams.get("search") ?? "");
-  const [debouncedSearch, setDebouncedSearch] = useState(() => searchParams.get("search") ?? "");
+  const [searchQuery, setSearchQuery] = useState(() => searchParams.get("search") ?? "");
   const [selectedCategory, setSelectedCategory] = useState<string | undefined>(
     () => searchParams.get("categoryId") ?? undefined,
   );
@@ -35,7 +35,7 @@ const Products = () => {
     const q = searchParams.get("search") ?? "";
     const categoryId = searchParams.get("categoryId") ?? undefined;
     setSearch(q);
-    setDebouncedSearch(q);
+    setSearchQuery(q);
     setSelectedCategory(categoryId);
     setCurrentPage(1);
   }, [searchParams]);
@@ -44,19 +44,18 @@ const Products = () => {
   useEffect(() => {
     if (debounceRef.current) clearTimeout(debounceRef.current);
     debounceRef.current = setTimeout(() => {
-      setDebouncedSearch(search);
-      setCurrentPage(1);
+      setSearchQuery(search);
     }, 500);
     return () => { if (debounceRef.current) clearTimeout(debounceRef.current); };
   }, [search]);
 
   const { data: productsData, isLoading, isError } = useQuery({
-    queryKey: ["products", currentPage, debouncedSearch, selectedCategory],
+    queryKey: ["products", searchQuery, selectedCategory, currentPage],
     queryFn: () =>
       productService.getProducts({
         page: currentPage,
         limit: 20,
-        search: debouncedSearch || undefined,
+        search: searchQuery || undefined,
         categoryId: selectedCategory,
       }),
   });
@@ -67,18 +66,15 @@ const Products = () => {
   });
 
   const products = productsData?.data ?? [];
-  const totalPagesFromMeta = (productsData as { meta?: { totalPages?: number } } | undefined)?.meta
-    ?.totalPages;
   const totalPages =
-    totalPagesFromMeta ??
-    (productsData ? Math.max(1, Math.ceil(productsData.total / 20)) : 1);
+    (productsData as { meta?: { totalPages?: number } } | undefined)?.meta?.totalPages ?? 1;
   const dedupedCategories = (categories ?? []).filter(
     (category, index, all) =>
       all.findIndex((item) => item.name.toLowerCase() === category.name.toLowerCase()) === index,
   );
   const quickTabs = DEFAULT_CATEGORY_TABS.map((tabName) =>
     dedupedCategories.find((category) => category.name.toLowerCase() === tabName.toLowerCase()),
-  ).filter(Boolean);
+  ).filter((category): category is NonNullable<typeof category> => Boolean(category));
 
   return (
     <section>
@@ -108,19 +104,19 @@ const Products = () => {
           </button>
           {quickTabs.map((category) => (
             <button
-              key={category!.id}
+              key={category.id}
               type="button"
               onClick={() => {
-                setSelectedCategory(category!.id);
+                setSelectedCategory(category.id);
                 setCurrentPage(1);
               }}
               className={`px-4 py-2 rounded-full border text-sm ${
-                selectedCategory === category!.id
+                selectedCategory === category.id
                   ? "bg-primary text-white border-primary"
                   : "bg-white text-black border-[#D9D9D9]"
               }`}
             >
-              {category!.name}
+              {category.name}
             </button>
           ))}
         </div>
@@ -258,7 +254,10 @@ const Products = () => {
           <input
             type="text"
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            onChange={(e) => {
+              setSearch(e.target.value);
+              setCurrentPage(1);
+            }}
             placeholder="Search products..."
             className="border border-[#D9D9D9] rounded-full px-4 py-2 text-sm w-full lg:w-64 outline-none focus:border-primary"
           />

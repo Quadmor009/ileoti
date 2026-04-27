@@ -49,6 +49,7 @@ const Home = () => {
   const categoryCards = categories?.length
     ? categories.map((category, i) => ({
         id: category.id,
+        name: category.name,
         image: category.imageUrl ?? CATEGORY_FALLBACKS[i] ?? CATEGORY_FALLBACKS[0],
       }))
     : [];
@@ -99,9 +100,13 @@ const Home = () => {
                   backgroundSize: "cover",
                   backgroundPosition: "center",
                 }}
-                className="w-69 h-88 rounded-2xl transition-all duration-500 ease-in-out hover:h-95 origin-center shrink-0 cursor-pointer"
+                className="relative w-69 h-88 rounded-2xl transition-all duration-500 ease-in-out hover:h-95 origin-center shrink-0 cursor-pointer"
                 onClick={() => navigate(`/products?categoryId=${card.id}`)}
-              />
+              >
+                <div className="absolute bottom-0 left-0 right-0 bg-black/50 text-white text-center py-2 rounded-b-2xl font-semibold">
+                  {card.name}
+                </div>
+              </div>
             ))}
           </div>
         </div>

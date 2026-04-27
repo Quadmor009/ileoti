@@ -164,7 +164,8 @@ const Navbar = () => {
   );
 
   return (
-    <nav className="sticky top-0 z-50 bg-white shadow-sm max-w-300 mx-auto py-7 lato hidden lg:flex items-center justify-between">
+    <div className="sticky top-0 z-50 bg-white shadow-sm w-full">
+      <nav className="max-w-[1300px] mx-auto px-6 py-5 lato hidden lg:flex items-center justify-between">
       <div className="flex items-center gap-3">
         <p className="text-xl font-bold lato text-black">Products</p>
         <form onSubmit={handleSearchSubmit} className="flex items-center gap-2">
@@ -222,7 +223,8 @@ const Navbar = () => {
           <Login />
         </div>
       )}
-    </nav>
+      </nav>
+    </div>
   );
 };
 
