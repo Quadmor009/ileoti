@@ -1,6 +1,4 @@
 import { ImagesAndIcons } from "../../shared/images-icons/ImagesAndIcons";
-import Lovelyred from "../../assets/icons/lovelyred";
-import Button from "../btns/Button";
 import type { CartItem } from "../../types";
 import { effectivePrice, formatNGN, primaryImage } from "../../lib/format";
 
@@ -21,68 +19,68 @@ const ProductCardCart = ({
   onUpdateQuantity,
   onToggleWishlist,
 }: ProductCardCartProps) => {
-  const name = item?.product?.name ?? "Tanqueray London Dry Gin";
-  const category = item?.product
-    ? (item.product as { category?: { name?: string } }).category?.name ?? "Product"
-    : "Gin";
-  const image = item?.product?.images
-    ? primaryImage(item.product.images, ImagesAndIcons.furasgnBottle)
-    : ImagesAndIcons.furasgnBottle;
-  const price = item?.product ? effectivePrice(item.product) : 35000;
-  const quantity = item?.quantity ?? 1;
-  const productId = item?.productId;
+  if (!item?.product) {
+    return null;
+  }
+
+  const name = item.product.name || "—";
+  const category =
+    (item.product as { category?: { name?: string } }).category?.name ?? "—";
+  const image = primaryImage(item.product.images, ImagesAndIcons.furasgnBottle);
+  const unitPrice = effectivePrice(item.product);
+  const quantity = item.quantity ?? 1;
+  const lineTotal = unitPrice * quantity;
+  const productId = item.productId;
 
   return (
-    <div key={i ?? item?.id}>
-      <div className="flex gap-8 items-center">
-        <img className="w-55 h-55 rounded-3xl" src={image} alt={name} />
-        <div className="flex items-start flex-auto justify-between">
-          <div className="flex flex-col gap-2">
-            <p className="text-2xl leading-8 text-black font-bold max-w-59">{name}</p>
-            <p className="text-xl font-normal text-[#585858]">Category: {category}</p>
-            <div className="flex items-center gap-4">
+    <div key={i ?? item.id}>
+      <div className="flex gap-6 sm:gap-8 items-start sm:items-center">
+        <img className="w-28 h-28 sm:w-55 sm:h-55 rounded-2xl sm:rounded-3xl object-cover shrink-0" src={image} alt={name} />
+        <div className="flex flex-1 flex-col sm:flex-row sm:items-start sm:justify-between gap-4 min-w-0">
+          <div className="flex flex-col gap-2 min-w-0">
+            <p className="text-xl sm:text-2xl leading-tight text-black font-bold">{name}</p>
+            <p className="text-base sm:text-xl font-normal text-[#585858]">Category: {category}</p>
+            <p className="text-sm text-[#585858]">
+              {formatNGN(unitPrice)} each × {quantity}
+            </p>
+            <div className="flex items-center gap-4 pt-1">
               <button
-                className="w-8 h-8 rounded-full overflow-hidden"
-                onClick={() => productId && onToggleWishlist?.(productId)}
+                type="button"
+                className="w-9 h-9 rounded-full overflow-hidden flex items-center justify-center hover:opacity-80 transition-opacity"
+                onClick={() => onToggleWishlist?.(productId)}
+                aria-label="Wishlist"
               >
-                <Lovelyred width="32" height="32" rx="16" />
+                <img src={ImagesAndIcons.lovelyRed} alt="" className="w-8 h-8" />
               </button>
-              <button onClick={() => productId && onRemove?.(productId)}>
-                <img src={ImagesAndIcons.trashSm} alt="Remove" />
+              <button type="button" onClick={() => onRemove?.(productId)} aria-label="Remove from cart">
+                <img src={ImagesAndIcons.trashSm} alt="" />
               </button>
             </div>
-            <div className="flex gap-4 items-center">
-              <div className="w-42">
-                <Button
-                  type="red"
-                  label="Add To Cart"
-                  className="py-3 text-base rounded-[55px]"
-                />
-              </div>
-              <div className="bg-[#F4EEEE] rounded-[55px] px-4 py-2 flex gap-2 font-semibold text-2xl">
+            <div className="flex flex-wrap gap-3 items-center pt-2">
+              <div className="bg-[#F4EEEE] rounded-[55px] px-4 py-2 flex gap-4 items-center font-semibold text-xl sm:text-2xl">
                 <button
-                  onClick={() =>
-                    productId &&
-                    quantity > 1 &&
-                    onUpdateQuantity?.(productId, quantity - 1)
-                  }
+                  type="button"
+                  className="min-w-[2rem] text-center disabled:opacity-40"
+                  onClick={() => quantity > 1 && onUpdateQuantity?.(productId, quantity - 1)}
+                  disabled={quantity <= 1}
                 >
-                  -
+                  −
                 </button>
-                <span>{quantity}</span>
+                <span className="min-w-[2ch] text-center">{quantity}</span>
                 <button
-                  onClick={() =>
-                    productId && onUpdateQuantity?.(productId, quantity + 1)
-                  }
+                  type="button"
+                  className="min-w-[2rem] text-center"
+                  onClick={() => onUpdateQuantity?.(productId, quantity + 1)}
                 >
                   +
                 </button>
               </div>
             </div>
           </div>
-          <h4 className="text-2xl leading-8 text-black font-normal">
-            {formatNGN(price)}
-          </h4>
+          <div className="flex flex-col items-start sm:items-end gap-1 shrink-0">
+            <p className="text-xs font-medium uppercase tracking-wide text-[#585858]">Line total</p>
+            <p className="text-2xl sm:text-3xl font-semibold text-black tabular-nums">{formatNGN(lineTotal)}</p>
+          </div>
         </div>
       </div>
     </div>

@@ -171,9 +171,9 @@ const Cart = () => {
         <div className="w-full lg:w-115">
           <h4 className="text-3xl font-bold">Summary</h4>
           <div className="flex flex-col gap-2 mt-8">
-            <div className="flex justify-between">
+            <div className="flex justify-between gap-4">
               <p className="text-base lg:text-xl font-bold text-black">Subtotal</p>
-              <p className="text-2xl font-normal text-black">{formatNGN(subtotal)}</p>
+              <p className="text-2xl font-normal text-black tabular-nums">{formatNGN(subtotal)}</p>
             </div>
             {discountAmount > 0 && (
               <div className="flex justify-between">
@@ -183,18 +183,18 @@ const Cart = () => {
                 <p className="text-2xl font-normal text-primary">-{formatNGN(discountAmount)}</p>
               </div>
             )}
-            <div className="flex justify-between">
-              <p className="text-base lg:text-xl font-bold text-black">Estimated Shipping</p>
-              <p className="text-2xl font-normal text-black">{formatNGN(shipping)}</p>
+            <div className="flex justify-between gap-4">
+              <p className="text-base lg:text-xl font-normal text-[#585858]">Estimated Shipping</p>
+              <p className="text-2xl font-normal text-[#585858] tabular-nums">{formatNGN(shipping)}</p>
             </div>
-            <div className="flex justify-between">
-              <p className="text-base lg:text-xl font-bold text-black">Estimated Tax</p>
-              <p className="text-2xl font-normal text-black">{formatNGN(tax)}</p>
+            <div className="flex justify-between gap-4">
+              <p className="text-base lg:text-xl font-normal text-[#585858]">Estimated Tax</p>
+              <p className="text-2xl font-normal text-[#585858] tabular-nums">{formatNGN(tax)}</p>
             </div>
           </div>
-          <div className="flex justify-between border-y-2 mb-6 mt-4 border-[#F0F0F0] py-4">
+          <div className="flex justify-between border-y-2 mb-6 mt-4 border-[#F0F0F0] py-4 gap-4">
             <p className="text-base lg:text-xl font-bold text-black">Total</p>
-            <p className="text-2xl font-normal text-black">{formatNGN(total)}</p>
+            <p className="text-2xl font-semibold text-black tabular-nums">{formatNGN(total)}</p>
           </div>
 
           <CustomInput
@@ -241,9 +241,7 @@ const Cart = () => {
                 />
                 <div className="flex-1">
                   <p className="font-bold">{item.product.name}</p>
-                  <p className="text-[#585858] text-sm">
-                    {formatNGN(item.product.discountedPrice ?? item.product.price)}
-                  </p>
+                  <p className="text-[#585858] text-sm">{formatNGN(effectivePrice(item.product))}</p>
                 </div>
                 <button
                   type="button"

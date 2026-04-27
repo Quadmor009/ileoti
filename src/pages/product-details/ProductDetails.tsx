@@ -372,47 +372,52 @@ export default function ProductDetailsPage() {
                 </div>
               </>
             ) : (
-              <>
-                <div className="mt-9">
-                  <p className="font-normal text-2xl text-[#585858] mb-3">In cart</p>
+              <div className="mt-9 space-y-6">
+                <div className="rounded-2xl border border-[#ECECEC] bg-[#FAFAFA] px-4 py-5 sm:px-6 sm:py-6">
+                  <p className="text-sm font-semibold uppercase tracking-wide text-[#80011D] mb-1">
+                    In your cart
+                  </p>
+                  <p className="text-base text-[#585858] mb-4">Adjust quantity or continue to checkout.</p>
                   <div
-                    className="max-w-md flex-1 min-h-[48px] sm:min-h-14 rounded-[56px] border border-[#80011D] flex items-center justify-center gap-6 sm:gap-10"
+                    className="max-w-md w-full min-h-[52px] sm:min-h-14 rounded-[56px] border border-[#80011D] bg-white flex items-center justify-center gap-8 sm:gap-12 shadow-sm"
                     onClick={(e) => e.stopPropagation()}
                   >
                     <button
                       type="button"
-                      className="text-xl font-medium px-2 disabled:opacity-40"
+                      className="text-2xl font-medium w-12 h-12 rounded-full hover:bg-[#FFF5F5] disabled:opacity-40 transition-colors"
                       onClick={() => bumpCart(-1)}
                       disabled={updateLineMutation.isPending || removeLineMutation.isPending}
+                      aria-label="Decrease quantity"
                     >
-                      -
+                      −
                     </button>
-                    <span className="text-lg font-semibold min-w-[2rem] text-center">{lineQty}</span>
+                    <span className="text-xl font-semibold min-w-[2.5rem] text-center tabular-nums">{lineQty}</span>
                     <button
                       type="button"
-                      className="text-xl font-medium px-2 disabled:opacity-40"
+                      className="text-2xl font-medium w-12 h-12 rounded-full hover:bg-[#FFF5F5] disabled:opacity-40 transition-colors"
                       onClick={() => bumpCart(1)}
                       disabled={updateLineMutation.isPending || removeLineMutation.isPending}
+                      aria-label="Increase quantity"
                     >
                       +
                     </button>
                   </div>
                 </div>
-                <Button
-                  type="red"
-                  label="Buy Now"
-                  className="py-6 mt-9 text-base rounded-[55px]"
-                  handleClick={handleBuyNow}
-                />
-                <div className="mt-4 flex gap-4">
+                <div className="flex flex-col gap-3">
+                  <Button
+                    type="red"
+                    label="Buy now"
+                    className="py-6 text-base rounded-[55px]"
+                    handleClick={handleBuyNow}
+                  />
                   <Button
                     type="outlineRed"
                     className="py-6"
-                    label="Create Gift Box"
+                    label="Create gift box"
                     handleClick={() => setGiftBoxOpen(true)}
                   />
                 </div>
-              </>
+              </div>
             )}
 
             {/* Mobile: You May Also Like */}

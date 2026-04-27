@@ -160,15 +160,13 @@ const FavouritesDropDown = () => {
       onOpenChange={setOpen}
       overlayInnerStyle={{ padding: 0, borderRadius: 24 }}
     >
-      <div className="border border-transparent flex justify-center items-center rounded-full hover:border-[#80011D] transition-all duration-300 p-0.5">
-        <button
-          type="button"
-          className="w-10 h-10 rounded-full overflow-hidden flex items-center justify-center"
-          aria-label="Favourites"
-        >
-          <img src={ImagesAndIcons.lovelyRed} alt="" className="w-7 h-7 opacity-90" />
-        </button>
-      </div>
+      <button
+        type="button"
+        className="w-10 h-10 rounded-full flex items-center justify-center hover:opacity-90 transition-opacity"
+        aria-label="Favourites"
+      >
+        <img src={ImagesAndIcons.lovelyRed} alt="" className="w-8 h-8" />
+      </button>
     </Popover>
   );
 };

@@ -93,6 +93,7 @@ const Login = () => {
         style={{
           borderRadius: 24,
         }}
+        styles={{ content: { background: "#fff", borderRadius: 24 } }}
       >
         <div className="py-9 px-8 lato">
           <div className="flex mb-11 items-center justify-between ">

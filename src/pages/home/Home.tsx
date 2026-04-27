@@ -152,42 +152,62 @@ const Home = () => {
         <h4 className="text-2xl sm:text-[28px] md:text-[32px] font-semibold text-white text-center mb-8 sm:mb-12 md:mb-16 max-w-3xl mx-auto">
           FEATURE HIGHLIGHTS
         </h4>
-        <div className="flex flex-col md:flex-row items-stretch justify-center gap-6 md:gap-10 lg:gap-20 max-w-5xl mx-auto w-full">
-          <div className="bg-[#FF99CC] w-full min-h-[200px] md:min-h-0 md:h-56 md:w-60 lg:w-123 h-auto md:max-w-none rounded-xl lg:rounded-[20px] flex items-center justify-center p-2 sm:p-3">
-            <div
-              style={{
-                backgroundImage: `url(${ImagesAndIcons.cooperateEvents})`,
-                backgroundSize: "cover",
-                backgroundRepeat: "no-repeat",
-                backgroundPosition: "center",
-              }}
-              onClick={() => navigate(routes.contact)}
-              className="w-full min-h-[188px] md:min-h-0 aspect-[4/3] md:aspect-auto md:w-[80%] md:h-[80%] rounded-lg md:rounded-md cursor-pointer md:lg:w-101 md:lg:h-94 flex flex-col items-center justify-center p-4 md:p-6"
-            >
-              <h2 className="font-bold text-sm sm:text-base md:text-2xl lg:text-4xl text-center text-white leading-snug max-w-[18rem] sm:max-w-none mb-3 md:mb-6">
-                FOR EVENTS &amp; CORPORATE SERVICES
-              </h2>
-              <div className="w-full max-w-xs">
-                <Button type="white" label="Request a quote" className="text-primary !text-sm sm:!text-base" />
+        <div className="flex flex-col md:flex-row items-stretch justify-center gap-6 md:gap-10 lg:gap-14 max-w-5xl mx-auto w-full">
+          <div className="w-full max-w-xl mx-auto md:mx-0 md:flex-1 md:max-w-none">
+            <div className="relative rounded-2xl lg:rounded-[20px] bg-[#FF99CC] p-3 sm:p-4 overflow-hidden aspect-[4/3] md:aspect-[16/11] min-h-[200px]">
+              <div
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    navigate(routes.contact);
+                  }
+                }}
+                style={{
+                  backgroundImage: `url(${ImagesAndIcons.cooperateEvents})`,
+                  backgroundSize: "cover",
+                  backgroundRepeat: "no-repeat",
+                  backgroundPosition: "center",
+                }}
+                onClick={() => navigate(routes.contact)}
+                className="absolute inset-3 sm:inset-4 rounded-xl overflow-hidden cursor-pointer flex flex-col items-center justify-center p-4 md:p-6 text-center"
+              >
+                <h2 className="font-bold text-sm sm:text-base md:text-2xl lg:text-4xl text-white leading-snug max-w-[18rem] sm:max-w-none mb-3 md:mb-6">
+                  FOR EVENTS &amp; CORPORATE SERVICES
+                </h2>
+                <div className="w-full max-w-xs">
+                  <Button type="white" label="Request a quote" className="text-primary !text-sm sm:!text-base" />
+                </div>
               </div>
             </div>
           </div>
-          <div className="bg-[#FF99CC] w-full min-h-[200px] md:min-h-0 md:h-56 md:w-60 lg:w-123 h-auto rounded-xl lg:rounded-[20px] flex items-center justify-center p-2 sm:p-3">
-            <div
-              style={{
-                backgroundImage: `url(${ImagesAndIcons.buildyourbox})`,
-                backgroundSize: "cover",
-                backgroundRepeat: "no-repeat",
-                backgroundPosition: "center",
-              }}
-              onClick={() => navigate(routes.contact)}
-              className="w-full min-h-[188px] md:min-h-0 aspect-[4/3] md:aspect-auto md:w-[80%] md:h-[80%] cursor-pointer rounded-lg md:rounded-md md:lg:w-101 md:lg:h-94 flex items-center flex-col justify-center p-4 md:p-6"
-            >
-              <h2 className="font-bold text-sm sm:text-base md:text-2xl lg:text-4xl max-w-[18rem] sm:max-w-md mx-auto text-center mb-3 md:mb-6 text-white leading-snug">
-                BUILD YOUR OWN BOX
-              </h2>
-              <div className="w-full max-w-xs">
-                <Button type="white" label="Request a quote" className="text-primary !text-sm sm:!text-base" />
+          <div className="w-full max-w-xl mx-auto md:mx-0 md:flex-1 md:max-w-none">
+            <div className="relative rounded-2xl lg:rounded-[20px] bg-[#FF99CC] p-3 sm:p-4 overflow-hidden aspect-[4/3] md:aspect-[16/11] min-h-[200px]">
+              <div
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    navigate(routes.contact);
+                  }
+                }}
+                style={{
+                  backgroundImage: `url(${ImagesAndIcons.buildyourbox})`,
+                  backgroundSize: "cover",
+                  backgroundRepeat: "no-repeat",
+                  backgroundPosition: "center",
+                }}
+                onClick={() => navigate(routes.contact)}
+                className="absolute inset-3 sm:inset-4 rounded-xl overflow-hidden cursor-pointer flex flex-col items-center justify-center p-4 md:p-6 text-center"
+              >
+                <h2 className="font-bold text-sm sm:text-base md:text-2xl lg:text-4xl max-w-[18rem] sm:max-w-md mx-auto mb-3 md:mb-6 text-white leading-snug">
+                  BUILD YOUR OWN BOX
+                </h2>
+                <div className="w-full max-w-xs">
+                  <Button type="white" label="Request a quote" className="text-primary !text-sm sm:!text-base" />
+                </div>
               </div>
             </div>
           </div>

@@ -80,6 +80,7 @@ const SignUp = () => {
         style={{
           borderRadius: 24,
         }}
+        styles={{ content: { background: "#fff", borderRadius: 24 } }}
       >
         <div className="py-9 lato px-8">
           <div className="flex mb-11 items-center justify-between ">
