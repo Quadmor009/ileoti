@@ -76,7 +76,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
     onSuccess: (cart, nextQuantity) => {
       setCart(cart);
       setQuantity(nextQuantity);
-      void qc.invalidateQueries({ queryKey: ["cart"] });
+      qc.setQueryData(['cart'], cart);
     },
     onError: (e) => {
       void message.error(getApiErrorMessage(e));
@@ -131,6 +131,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
           const cart = await cartService.removeFromCart(id);
           setCart(cart);
           setQuantity(0);
+          qc.setQueryData(['cart'], cart);
         } catch {
           void message.error('Could not remove from cart');
         }
