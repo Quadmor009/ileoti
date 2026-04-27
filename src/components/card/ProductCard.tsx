@@ -31,11 +31,10 @@ interface ProductCardProps {
 
 const ProductCard = ({ product }: ProductCardProps) => {
   const navigate = useNavigate();
-  const user = useAuthStore((s) => s.user);
   const setCart = useCartStore((s) => s.setCart);
   const addGuestItem = useCartStore((s) => s.addGuestItem);
   const removeGuestItem = useCartStore((s) => s.removeGuestItem);
-  const isLoggedIn = Boolean(user);
+  const isLoggedIn = useAuthStore((s) => Boolean(s.accessToken));
   const [wishlisted, setWishlisted] = useState(false);
   const [giftBoxOpen, setGiftBoxOpen] = useState(false);
   const [personalMessageOpen, setPersonalMessageOpen] = useState(false);
@@ -68,8 +67,8 @@ const ProductCard = ({ product }: ProductCardProps) => {
       setCart(cart);
       setQuantity(nextQuantity);
     },
-    onError: () => {
-      void message.error('Could not add to cart');
+    onError: (e) => {
+      void message.error(getApiErrorMessage(e));
     },
   });
 
@@ -159,9 +158,9 @@ const ProductCard = ({ product }: ProductCardProps) => {
           handleCardClick();
         }
       }}
-      className="cursor-pointer border border-transparent lg:hover:border-[#80011D] lg:hover:bg-[#F4EEEE] p-2 sm:p-2.5 rounded-3xl transition-all duration-300 ease-in-out w-[min(88vw,300px)] sm:w-56 shrink-0 lg:w-[246px] max-w-full"
+      className="cursor-pointer border border-transparent lg:hover:border-[#80011D] lg:hover:bg-[#F4EEEE] flex flex-col h-full w-full min-w-0 max-w-full p-2 sm:p-2.5 rounded-3xl transition-all duration-300 ease-in-out"
     >
-      <div className="w-full h-[200px] sm:h-[220px] lg:w-[246px] lg:h-[306px] mb-3 rounded-2xl overflow-hidden relative">
+      <div className="relative w-full aspect-[246/306] shrink-0 mb-3 rounded-2xl overflow-hidden bg-[#f5f5f5]">
         {hasImage ? (
           <div
             style={{
@@ -170,7 +169,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
               backgroundRepeat: "no-repeat",
               backgroundPosition: "center",
             }}
-            className="w-full h-full"
+            className="absolute inset-0 w-full h-full"
           >
             <div className="p-2 flex items-center justify-end">
               <button
@@ -187,12 +186,12 @@ const ProductCard = ({ product }: ProductCardProps) => {
             </div>
           </div>
         ) : (
-          <div className="w-full h-full bg-[#8B0000] text-white flex items-center justify-center text-2xl font-semibold">
+          <div className="absolute inset-0 w-full h-full bg-[#8B0000] text-white flex items-center justify-center text-2xl font-semibold">
             <span>{firstLetters}</span>
           </div>
         )}
         {!hasImage && (
-          <div className="absolute top-2 right-2">
+          <div className="absolute top-2 right-2 z-20">
             <button
               type="button"
               onClick={handleWishlistClick}
@@ -207,63 +206,66 @@ const ProductCard = ({ product }: ProductCardProps) => {
           </div>
         )}
       </div>
-      <p className="text-sm sm:text-base lg:text-xl mb-0.5 font-medium text-black line-clamp-2 min-h-0">
-        {name}
-      </p>
-      <p className="text-xs sm:text-sm lg:text-xs mb-0.5 text-[#585858] font-medium line-clamp-1">
-        {product.category?.name ?? "—"}
-      </p>
-      {(product.reviews?.length ?? 0) > 0 ? (
-        <div className="mb-0.5 flex items-center gap-2">
-          <Rate disabled value={avgRating} allowHalf />
-          <p className="text-[10px] lg:text-xs text-[#585858] font-medium">
-            {product.reviews?.length} Reviews
-          </p>
+      <div className="flex flex-col flex-1 min-h-0 w-full min-w-0">
+        <p className="text-sm sm:text-base lg:text-xl mb-0.5 font-medium text-black line-clamp-2 min-h-[2.75rem] sm:min-h-[3.25rem] lg:min-h-[4.25rem] leading-snug">
+          {name}
+        </p>
+        <p className="text-xs sm:text-sm lg:text-xs mb-0.5 text-[#585858] font-medium line-clamp-1 shrink-0">
+          {product.category?.name ?? "—"}
+        </p>
+        {(product.reviews?.length ?? 0) > 0 ? (
+          <div className="mb-0.5 flex items-center gap-2 shrink-0">
+            <Rate disabled value={avgRating} allowHalf />
+            <p className="text-[10px] lg:text-xs text-[#585858] font-medium">
+              {product.reviews?.length} Reviews
+            </p>
+          </div>
+        ) : null}
+        <div className="flex items-center gap-2 shrink-0">
+          <p className="text-sm sm:text-base lg:text-xl font-medium text-black">{formatNGN(sellingPrice)}</p>
         </div>
-      ) : null}
-      <div className="flex items-center gap-2 mb-3">
-        <p className="text-sm sm:text-base lg:text-xl font-medium text-black">{formatNGN(sellingPrice)}</p>
-      </div>
-      <div className="flex items-center gap-2 w-full min-w-0">
-        {quantity === 0 ? (
+        <div className="flex-1 min-h-0" aria-hidden />
+        <div className="flex items-center gap-2 w-full min-w-0 shrink-0 pt-2">
+          {quantity === 0 ? (
+            <button
+              type="button"
+              onClick={(e) => void handleAddToCartClick(e, 1)}
+              className="flex-1 min-h-[48px] sm:min-h-14 h-12 sm:h-14 text-sm sm:text-base text-white bg-primary rounded-[56px] px-3 sm:px-6"
+              disabled={addToCartMutation.isPending}
+            >
+              Add to cart
+            </button>
+          ) : (
+            <div
+              className="flex-1 min-h-[48px] sm:h-14 rounded-[56px] border border-[#80011D] flex items-center justify-center gap-6 sm:gap-10"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <button
+                type="button"
+                onClick={(e) => void handleDecrement(e)}
+                disabled={addToCartMutation.isPending}
+              >
+                -
+              </button>
+              <span className="text-sm font-medium">{quantity}</span>
+              <button
+                type="button"
+                onClick={(e) => void handleIncrement(e)}
+                disabled={addToCartMutation.isPending}
+              >
+                +
+              </button>
+            </div>
+          )}
           <button
             type="button"
-            onClick={(e) => void handleAddToCartClick(e, 1)}
-            className="flex-1 min-h-[48px] sm:min-h-14 h-12 sm:h-14 text-sm sm:text-base text-white bg-primary rounded-[56px] px-3 sm:px-6"
-            disabled={addToCartMutation.isPending}
+            onClick={handleGiftBoxClick}
+            className="shrink-0 h-12 w-12 min-w-12 min-h-12 rounded-full flex justify-center items-center border border-[#80011D] bg-white"
+            aria-label="Add to gift box"
           >
-            Add to cart
+            <img src={ImagesAndIcons.giftBox} alt="" className="w-5 h-5 sm:w-6 sm:h-6" />
           </button>
-        ) : (
-          <div
-            className="flex-1 min-h-[48px] sm:h-14 rounded-[56px] border border-[#80011D] flex items-center justify-center gap-6 sm:gap-10"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <button
-              type="button"
-              onClick={(e) => void handleDecrement(e)}
-              disabled={addToCartMutation.isPending}
-            >
-              -
-            </button>
-            <span className="text-sm font-medium">{quantity}</span>
-            <button
-              type="button"
-              onClick={(e) => void handleIncrement(e)}
-              disabled={addToCartMutation.isPending}
-            >
-              +
-            </button>
-          </div>
-        )}
-        <button
-          type="button"
-          onClick={handleGiftBoxClick}
-          className="shrink-0 h-12 w-12 min-w-12 min-h-12 rounded-full flex justify-center items-center border border-[#80011D] bg-white"
-          aria-label="Add to gift box"
-        >
-          <img src={ImagesAndIcons.giftBox} alt="" className="w-5 h-5 sm:w-6 sm:h-6" />
-        </button>
+        </div>
       </div>
       {product && id ? (
         <>

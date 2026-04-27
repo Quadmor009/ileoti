@@ -80,7 +80,10 @@ const Home = () => {
             <p className="text-center text-[#585858] py-6">No products available</p>
           )}
           {featuredProducts.map((product) => (
-            <div key={product.id} className="snap-start shrink-0">
+            <div
+              key={product.id}
+              className="snap-start shrink-0 w-[min(88vw,300px)] sm:w-56 lg:w-[246px] flex h-full min-h-0"
+            >
               <ProductCard product={product} />
             </div>
           ))}

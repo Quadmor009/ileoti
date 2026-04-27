@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import { effectivePrice } from '../lib/format';
 
 export interface GuestCartItem {
   productId: string;
@@ -80,7 +81,10 @@ export const useCartStore = create<CartState>()(
       setCart: (cartData: any) => {
         const items = cartData?.items ?? [];
         const itemCount = items.reduce((sum: number, i: any) => sum + (i.quantity ?? 1), 0);
-        const total = items.reduce((sum: number, i: any) => sum + (Number(i.product?.price ?? 0) * (i.quantity ?? 1)), 0);
+        const total = items.reduce(
+          (sum: number, i: any) => sum + effectivePrice(i.product ?? {}) * (i.quantity ?? 1),
+          0,
+        );
         set({ items, itemCount, total });
       },
 

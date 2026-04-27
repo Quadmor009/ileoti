@@ -12,13 +12,13 @@ import { discountService } from "../../services/discount.service";
 import { wishlistService } from "../../services/wishlist.service";
 import { useAuthStore } from "../../store/auth.store";
 import { useCartStore } from "../../store/cart.store";
-import { formatNGN, primaryImage } from "../../lib/format";
+import { effectivePrice, formatNGN, primaryImage } from "../../lib/format";
+import { getApiErrorMessage } from "../../lib/api-error";
 import { routes } from "../../shared/routes/routes";
 import { ImagesAndIcons } from "../../shared/images-icons/ImagesAndIcons";
 
 const Cart = () => {
-  const user = useAuthStore((s) => s.user);
-  const isAuthenticated = Boolean(user);
+  const isAuthenticated = useAuthStore((s) => Boolean(s.accessToken));
   const navigate = useNavigate();
   const qc = useQueryClient();
   const setCart = useCartStore((s) => s.setCart);
@@ -93,13 +93,14 @@ const Cart = () => {
   }));
   const cartItems = isAuthenticated ? cart?.items ?? [] : normalizedGuestItems;
   const subtotal = isAuthenticated
-    ? Number((cart as { subtotal?: number } | undefined)?.subtotal ?? 0)
+    ? (cart?.items ?? []).reduce(
+        (sum, item) => sum + effectivePrice(item.product) * item.quantity,
+        0,
+      )
     : guestItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
   const shipping = 0;
   const tax = 0;
-  const apiTotal = isAuthenticated
-    ? Number((cart as { total?: number } | undefined)?.total ?? subtotal)
-    : subtotal;
+  const apiTotal = subtotal;
 
   const validateDiscountMutation = useMutation({
     mutationFn: () => discountService.validateCode(discountCode, subtotal),
@@ -248,9 +249,14 @@ const Cart = () => {
                   type="button"
                   className="h-10 rounded-full bg-primary px-4 text-xs text-white"
                   onClick={() => {
-                    void cartService.addToCart(item.productId, 1).then(() => {
-                      void qc.invalidateQueries({ queryKey: ["cart"] });
-                    });
+                    void cartService
+                      .addToCart(item.productId, 1)
+                      .then((cart) => {
+                        setCart(cart);
+                        void qc.invalidateQueries({ queryKey: ["cart"] });
+                        void message.success("Added to cart");
+                      })
+                      .catch((e) => void message.error(getApiErrorMessage(e)));
                   }}
                 >
                   Add To Cart

@@ -90,9 +90,14 @@ const Dashboard = () => {
           </div>
         </div>
         <h4 className="text-2xl font-bold mt-8">Personalized For You</h4>
-        <div className="flex items-center gap-7.5">
+        <div className="flex items-stretch gap-7.5 overflow-x-auto pb-1">
           {demoProducts.map((product) => (
-            <ProductCard key={product.id} product={product} />
+            <div
+              key={product.id}
+              className="shrink-0 w-[min(88vw,260px)] sm:w-56 flex h-full min-h-0"
+            >
+              <ProductCard product={product} />
+            </div>
           ))}
         </div>
       </div>

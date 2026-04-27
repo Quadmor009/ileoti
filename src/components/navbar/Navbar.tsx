@@ -56,8 +56,8 @@ function formatNotifTime(iso: string) {
 const Navbar = () => {
   const navigate = useNavigate();
   const qc = useQueryClient();
-  const { user } = useAuthStore();
-  const isLoggedIn = Boolean(user);
+  const { user, accessToken } = useAuthStore();
+  const isLoggedIn = Boolean(accessToken);
   const setCart = useCartStore((s) => s.setCart);
   const [searchDraft, setSearchDraft] = useState("");
 

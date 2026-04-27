@@ -57,6 +57,9 @@ export const authService = {
   getAddresses: () =>
     api.get(`${BASE}/profile/addresses`).then((r) => r.data),
 
+  createAddress: (data: AddressPayload & { isDefault: boolean }) =>
+    api.post(`${BASE}/profile/addresses`, data).then((r) => r.data),
+
   updateAddress: (id: string, data: Partial<AddressPayload>) =>
     api.put(`${BASE}/profile/addresses/${id}`, data).then((r) => r.data),
   logout,
@@ -90,10 +93,6 @@ export async function verifyOtp(email: string, otp: string): Promise<void> {
       otp,
     });
     useAuthStore.getState().setAuth(data.accessToken, data.user);
-    // Auto-verify age on login - user confirmed age via the frontend modal
-    await api.put('/authservice/v1.0/rest/api/app/profile', {
-      dateOfBirth: '1990-01-01',
-    });
   } catch (e) {
     throw new Error(getApiErrorMessage(e));
   }

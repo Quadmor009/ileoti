@@ -3,7 +3,7 @@ import Navbar from "../../components/navbar/Navbar";
 import Footer from "../../components/footer/Footer";
 import Button from "../../components/btns/Button";
 import Lovelyred from "../../assets/icons/lovelyred";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import RightHandSideProductDetail from "./component/RightHand";
 import ProductCard from "../../components/card/ProductCard";
 import RefundPolicy from "./component/RefundPolicy";
@@ -16,7 +16,8 @@ import { cartService } from "../../services/cart.service";
 import { wishlistService } from "../../services/wishlist.service";
 import { useAuthStore } from "../../store/auth.store";
 import { useCartStore } from "../../store/cart.store";
-import { formatDate, formatNGN, primaryImage } from "../../lib/format";
+import { effectivePrice, formatDate, formatNGN, primaryImage } from "../../lib/format";
+import { getApiErrorMessage } from "../../lib/api-error";
 import { ImagesAndIcons } from "../../shared/images-icons/ImagesAndIcons";
 import GiftBoxModal from "../../components/gift-box-modal/GiftboxModal";
 import PersonalMessageModal from "../../components/gift-box-modal/PersonalMessageModal";
@@ -36,8 +37,15 @@ export default function ProductDetailsPage() {
   const isAuthenticated = useAuthStore((s) => Boolean(s.accessToken));
   const setCart = useCartStore((s) => s.setCart);
   const addGuestItem = useCartStore((s) => s.addGuestItem);
+  const guestItems = useCartStore((s) => s.guestItems);
+  const updateGuestItem = useCartStore((s) => s.updateGuestItem);
+  const removeGuestItem = useCartStore((s) => s.removeGuestItem);
   const requestLogin = useLoginModalStore((s) => s.requestLogin);
   const qc = useQueryClient();
+
+  useEffect(() => {
+    setQuantity(1);
+  }, [id]);
 
   const { data: product, isLoading, isError } = useQuery({
     queryKey: ["product", id],
@@ -58,6 +66,25 @@ export default function ProductDetailsPage() {
     enabled: !!product?.categoryId,
   });
 
+  const reviews = reviewsData?.data ?? [];
+  const relatedProducts = relatedData?.data?.filter((p) => p.id !== id).slice(0, 3) ?? [];
+  const sellPrice = product ? effectivePrice(product) : 0;
+
+  const { data: cartData } = useQuery({
+    queryKey: ["cart"],
+    queryFn: cartService.getCart,
+    enabled: isAuthenticated,
+  });
+
+  const lineQty = useMemo(() => {
+    if (!id) return 0;
+    if (!isAuthenticated) {
+      return guestItems.find((i) => i.productId === id)?.quantity ?? 0;
+    }
+    const line = cartData?.items?.find((i) => i.productId === id);
+    return line?.quantity ?? 0;
+  }, [id, isAuthenticated, guestItems, cartData]);
+
   const addToCartMutation = useMutation({
     mutationFn: ({ productId, qty }: { productId: string; qty: number }) =>
       cartService.addToCart(productId, qty),
@@ -66,7 +93,26 @@ export default function ProductDetailsPage() {
       void message.success("Added to cart");
       void qc.invalidateQueries({ queryKey: ["cart"] });
     },
-    onError: () => void message.error("Could not add to cart"),
+    onError: (e) => void message.error(getApiErrorMessage(e)),
+  });
+
+  const updateLineMutation = useMutation({
+    mutationFn: ({ productId, qty }: { productId: string; qty: number }) =>
+      cartService.updateCartItem(productId, qty),
+    onSuccess: (cart) => {
+      setCart(cart);
+      void qc.invalidateQueries({ queryKey: ["cart"] });
+    },
+    onError: (e) => void message.error(getApiErrorMessage(e)),
+  });
+
+  const removeLineMutation = useMutation({
+    mutationFn: (productId: string) => cartService.removeFromCart(productId),
+    onSuccess: (cart) => {
+      setCart(cart);
+      void qc.invalidateQueries({ queryKey: ["cart"] });
+    },
+    onError: (e) => void message.error(getApiErrorMessage(e)),
   });
 
   const toggleWishlistMutation = useMutation({
@@ -75,48 +121,74 @@ export default function ProductDetailsPage() {
       setWishlisted((prev) => !prev);
       void qc.invalidateQueries({ queryKey: ["wishlist"] });
     },
-    onError: () => void message.error("Could not update wishlist"),
+    onError: (e) => void message.error(getApiErrorMessage(e)),
   });
 
+  const bumpCart = (delta: number) => {
+    if (!id) return;
+    const next = lineQty + delta;
+    if (!isAuthenticated) {
+      if (next <= 0) {
+        removeGuestItem(id);
+      } else {
+        updateGuestItem(id, next);
+      }
+      return;
+    }
+    if (next <= 0) {
+      removeLineMutation.mutate(id);
+    } else {
+      updateLineMutation.mutate({ productId: id, qty: next });
+    }
+  };
+
   const handleAddToCart = () => {
+    if (!product || !id) return;
     if (!isAuthenticated) {
       addGuestItem({
-        productId: id!,
-        name: product!.name,
+        productId: id,
+        name: product.name,
         price: sellPrice,
-        image: primaryImage(product!.images, ImagesAndIcons.furasgnBottle),
+        image: primaryImage(product.images, ImagesAndIcons.furasgnBottle),
         quantity,
-        category: product!.category?.name,
+        category: product.category?.name,
       });
       void message.success("Added to cart");
       return;
     }
-    addToCartMutation.mutate({ productId: id!, qty: quantity });
+    addToCartMutation.mutate({ productId: id, qty: quantity });
   };
 
   const handleBuyNow = () => {
+    if (!product || !id) return;
     if (!isAuthenticated) {
-      addGuestItem({
-        productId: id!,
-        name: product!.name,
-        price: sellPrice,
-        image: primaryImage(product!.images, ImagesAndIcons.furasgnBottle),
-        quantity,
-        category: product!.category?.name,
-      });
+      if (lineQty === 0) {
+        addGuestItem({
+          productId: id,
+          name: product.name,
+          price: sellPrice,
+          image: primaryImage(product.images, ImagesAndIcons.furasgnBottle),
+          quantity,
+          category: product.category?.name,
+        });
+      }
       navigate(routes.cart);
       return;
     }
-    addToCartMutation.mutate(
-      { productId: id!, qty: quantity },
-      {
-        onSuccess: (cart) => {
-          setCart(cart);
-          void qc.invalidateQueries({ queryKey: ["cart"] });
-          navigate(routes.cart);
+    if (lineQty === 0) {
+      addToCartMutation.mutate(
+        { productId: id, qty: quantity },
+        {
+          onSuccess: (cart) => {
+            setCart(cart);
+            void qc.invalidateQueries({ queryKey: ["cart"] });
+            navigate(routes.cart);
+          },
         },
-      },
-    );
+      );
+    } else {
+      navigate(routes.cart);
+    }
   };
 
   const handleToggleWishlist = () => {
@@ -127,9 +199,6 @@ export default function ProductDetailsPage() {
     toggleWishlistMutation.mutate();
   };
 
-  const reviews = reviewsData?.data ?? [];
-  const relatedProducts = relatedData?.data?.filter((p) => p.id !== id).slice(0, 3) ?? [];
-  const sellPrice = Number(product?.discountedPrice ?? product?.price ?? 0);
   const averageRating = useMemo(() => {
     if (!reviews.length) return 0;
     const total = reviews.reduce((sum, review) => sum + Number(review.rating ?? 0), 0);
@@ -201,9 +270,7 @@ export default function ProductDetailsPage() {
                     <div className="flex-1">
                       <p className="text-xl font-bold">{p.name}</p>
                       <p className="text-[#585858]">{p.category?.name}</p>
-                      <p className="font-semibold">
-                        {formatNGN(p.discountedPrice ?? p.price)}
-                      </p>
+                      <p className="font-semibold">{formatNGN(effectivePrice(p))}</p>
                       <button
                         type="button"
                         className="mt-3 h-10 rounded-full bg-primary px-5 text-sm text-white"
@@ -268,42 +335,95 @@ export default function ProductDetailsPage() {
               Product Category: {product.category?.name ?? "—"}
             </p>
 
-            {/* Quantity + Buttons */}
-            <div className="mt-9 flex items-center justify-between">
-              <p className="font-normal text-2xl text-[#585858]">Quantity</p>
-              <div className="bg-[#F4EEEE] rounded-[55px] px-4 py-2 flex gap-2 font-semibold text-2xl w-40">
-                <button onClick={() => setQuantity((q) => Math.max(1, q - 1))}>-</button>
-                <span>{quantity}</span>
-                <button onClick={() => setQuantity((q) => q + 1)}>+</button>
-              </div>
-            </div>
-            <Button
-              type="red"
-              label="Buy Now"
-              className="py-6 mt-9 text-base rounded-[55px]"
-              handleClick={handleBuyNow}
-            />
-            <div className="mt-4 flex gap-4">
-              <Button
-                type="outlineRed"
-                className="py-6"
-                label="Add To Cart"
-                handleClick={handleAddToCart}
-              />
-              <Button
-                type="outlineRed"
-                className="py-6"
-                label="Create Gift Box"
-                handleClick={() => setGiftBoxOpen(true)}
-              />
-            </div>
+            {/* Quantity + cart actions */}
+            {lineQty === 0 ? (
+              <>
+                <div className="mt-9 flex items-center justify-between">
+                  <p className="font-normal text-2xl text-[#585858]">Quantity</p>
+                  <div className="bg-[#F4EEEE] rounded-[55px] px-4 py-2 flex gap-2 font-semibold text-2xl w-40">
+                    <button type="button" onClick={() => setQuantity((q) => Math.max(1, q - 1))}>
+                      -
+                    </button>
+                    <span>{quantity}</span>
+                    <button type="button" onClick={() => setQuantity((q) => q + 1)}>
+                      +
+                    </button>
+                  </div>
+                </div>
+                <Button
+                  type="red"
+                  label="Buy Now"
+                  className="py-6 mt-9 text-base rounded-[55px]"
+                  handleClick={handleBuyNow}
+                />
+                <div className="mt-4 flex gap-4">
+                  <Button
+                    type="outlineRed"
+                    className="py-6"
+                    label={addToCartMutation.isPending ? "Adding…" : "Add To Cart"}
+                    handleClick={handleAddToCart}
+                  />
+                  <Button
+                    type="outlineRed"
+                    className="py-6"
+                    label="Create Gift Box"
+                    handleClick={() => setGiftBoxOpen(true)}
+                  />
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="mt-9">
+                  <p className="font-normal text-2xl text-[#585858] mb-3">In cart</p>
+                  <div
+                    className="max-w-md flex-1 min-h-[48px] sm:min-h-14 rounded-[56px] border border-[#80011D] flex items-center justify-center gap-6 sm:gap-10"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <button
+                      type="button"
+                      className="text-xl font-medium px-2 disabled:opacity-40"
+                      onClick={() => bumpCart(-1)}
+                      disabled={updateLineMutation.isPending || removeLineMutation.isPending}
+                    >
+                      -
+                    </button>
+                    <span className="text-lg font-semibold min-w-[2rem] text-center">{lineQty}</span>
+                    <button
+                      type="button"
+                      className="text-xl font-medium px-2 disabled:opacity-40"
+                      onClick={() => bumpCart(1)}
+                      disabled={updateLineMutation.isPending || removeLineMutation.isPending}
+                    >
+                      +
+                    </button>
+                  </div>
+                </div>
+                <Button
+                  type="red"
+                  label="Buy Now"
+                  className="py-6 mt-9 text-base rounded-[55px]"
+                  handleClick={handleBuyNow}
+                />
+                <div className="mt-4 flex gap-4">
+                  <Button
+                    type="outlineRed"
+                    className="py-6"
+                    label="Create Gift Box"
+                    handleClick={() => setGiftBoxOpen(true)}
+                  />
+                </div>
+              </>
+            )}
 
             {/* Mobile: You May Also Like */}
             <div className="flex-col lg:hidden">
               <p className="font-bold text-base mt-6 text-black">You May Also Like</p>
-              <div className="flex gap-4 overflow-x-auto">
+              <div className="flex gap-4 overflow-x-auto items-stretch">
                 {relatedProducts.map((p) => (
-                  <div key={p.id}>
+                  <div
+                    key={p.id}
+                    className="shrink-0 w-[min(88vw,300px)] sm:w-56 lg:w-[246px] flex h-full min-h-0"
+                  >
                     <ProductCard product={p} />
                   </div>
                 ))}

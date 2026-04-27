@@ -8,7 +8,7 @@ import { useEffect, useState } from "react";
 import { useAuthStore } from "../../store/auth.store";
 import { useNavigate } from "react-router-dom";
 import { routes } from "../../shared/routes/routes";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { authService } from "../../services/auth.service";
 import { cartService } from "../../services/cart.service";
 import { orderService } from "../../services/order.service";
@@ -20,6 +20,7 @@ import type { Address } from "../../types";
 const Checkout = () => {
   const isAuthenticated = useAuthStore((s) => Boolean(s.accessToken));
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
   useEffect(() => {
     if (!isAuthenticated) navigate(routes.home);
@@ -80,9 +81,37 @@ const Checkout = () => {
       if (!form.fullName || !form.address || !form.city || !form.state || !form.country || !form.phone) {
         throw new Error("Please fill in all required fields");
       }
-      // Use default address id if available; otherwise the backend will need a real address id.
-      const addressId = defaultAddr?.id;
-      if (!addressId) throw new Error("Please add a shipping address to your profile first");
+      if (!cartItems.length) {
+        throw new Error("Your cart is empty");
+      }
+
+      let addressId = defaultAddr?.id;
+      if (addressId) {
+        await authService.updateAddress(addressId, {
+          fullName: form.fullName,
+          address: form.address,
+          city: form.city,
+          state: form.state,
+          zip: form.zip || null,
+          country: form.country,
+          phone: form.phone,
+          isDefault: true,
+        });
+      } else {
+        const created = (await authService.createAddress({
+          type: "SHIPPING",
+          fullName: form.fullName,
+          address: form.address,
+          city: form.city,
+          state: form.state,
+          zip: form.zip || null,
+          country: form.country,
+          phone: form.phone,
+          isDefault: true,
+        })) as Address;
+        addressId = created.id;
+        void queryClient.invalidateQueries({ queryKey: ["addresses"] });
+      }
 
       const order = await orderService.createOrder({ addressId });
       const payment = await orderService.initializePayment(order.id);
@@ -110,8 +139,8 @@ const Checkout = () => {
               { value: "Delivery", label: "Delivery" },
               { value: "Pickup", label: "Pickup" },
             ]}
-            placeholder="Select Delivery Method"
-            label="Select Country"
+            placeholder="Select delivery method"
+            label="Delivery method"
           />
           <div className="flex gap-4 flex-col lg:flex-row items-center">
             <CustomInput
@@ -162,7 +191,7 @@ const Checkout = () => {
           />
           <Button
             type="red"
-            label={createOrderMutation.isPending ? "Processing..." : "Next: Payment Method"}
+            label={createOrderMutation.isPending ? "Processing…" : "Pay with Paystack"}
             className="lg:py-6 text-base lg:text-xl py-3 font-semibold rounded-[55px]"
             handleClick={() => createOrderMutation.mutate()}
           />
@@ -172,19 +201,10 @@ const Checkout = () => {
         <div className="w-full lg:w-115">
           <h4 className="text-3xl font-bold">Your Order</h4>
           <div className="flex flex-col gap-4 mt-6">
-            {cartItems.length === 0
-              ? [1, 2].map((i) => (
-                  <div key={i} className="flex gap-4 items-center">
-                    <img className="w-34 h-40 rounded-2xl" src={Img.softDrinkBottle} alt="" />
-                    <div>
-                      <p className="text-base lg:text-xl font-bold">Tanqueray London Dry Gin</p>
-                      <p className="text-[#585858] text-xs lg:text-base font-normal mb-6">Category: Gin</p>
-                      <p className="text-base lg:text-xl font-bold">N35,000</p>
-                      <p className="text-[#585858] text-xs lg:text-base font-normal">Quantity: 2</p>
-                    </div>
-                  </div>
-                ))
-              : cartItems.map((item) => (
+            {cartItems.length === 0 ? (
+              <p className="text-[#585858] text-base py-4">Your cart is empty. Add products before checkout.</p>
+            ) : (
+              cartItems.map((item) => (
                   <div key={item.id} className="flex gap-4 items-center">
                     <img
                       className="w-34 h-40 rounded-2xl object-cover"
@@ -204,7 +224,8 @@ const Checkout = () => {
                       </p>
                     </div>
                   </div>
-                ))}
+              )))
+            }
           </div>
           <h4 className="text-3xl font-bold mt-10">Summary</h4>
           <div className="flex flex-col gap-2 mt-8">
@@ -214,11 +235,11 @@ const Checkout = () => {
             </div>
             <div className="flex justify-between">
               <p className="text-base lg:text-xl font-bold text-black">Estimated Shipping</p>
-              <p className="text-2xl font-normal text-black">N0.00</p>
+              <p className="text-2xl font-normal text-black">{formatNGN(0)}</p>
             </div>
             <div className="flex justify-between">
               <p className="text-base lg:text-xl font-bold text-black">Estimated Tax</p>
-              <p className="text-2xl font-normal text-black">N0.00</p>
+              <p className="text-2xl font-normal text-black">{formatNGN(0)}</p>
             </div>
           </div>
           <div className="flex justify-between border-y-2 mt-4 border-[#F0F0F0] py-4">

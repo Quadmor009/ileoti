@@ -16,7 +16,7 @@ const FavouritesDropDown = () => {
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
   const qc = useQueryClient();
-  const isLoggedIn = useAuthStore((s) => Boolean(s.user));
+  const isLoggedIn = useAuthStore((s) => Boolean(s.accessToken));
   const requestLogin = useLoginModalStore((s) => s.requestLogin);
   const setCart = useCartStore((s) => s.setCart);
 

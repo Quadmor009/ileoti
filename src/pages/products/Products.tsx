@@ -300,12 +300,12 @@ const Products = () => {
         <p className="text-center text-red-600 py-10">Failed to load products</p>
       )}
       {!isLoading && !isError && (
-        <div className="grid grid-cols-2 md:grid-cols-4 max-w-270 mx-auto w-[90%] gap-y-14 gap-x-1 justify-center">
+        <div className="grid grid-cols-2 md:grid-cols-4 max-w-270 mx-auto w-[90%] items-stretch gap-y-10 gap-x-2 sm:gap-x-3 justify-center">
           {products.length === 0 ? (
             <p className="col-span-4 text-center text-[#585858] py-10">No products found.</p>
           ) : (
             products.map((product) => (
-              <div key={product.id}>
+              <div key={product.id} className="min-w-0 flex h-full">
                 <ProductCard product={product} />
               </div>
             ))

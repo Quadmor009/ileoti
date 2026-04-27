@@ -1,9 +1,9 @@
 import { message, Popover } from "antd";
+import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { routes } from "../../shared/routes/routes";
 import { authService } from "../../services/auth.service";
-import { useAuthStore } from "../../store/auth.store";
 
 type AccountMenuPopoverProps = {
   initials: string;
@@ -17,7 +17,7 @@ export function AccountMenuPopover({ initials, userEmail }: AccountMenuPopoverPr
   const [open, setOpen] = useState(false);
   const [logoutBusy, setLogoutBusy] = useState(false);
   const navigate = useNavigate();
-  const clearAuth = useAuthStore((s) => s.clearAuth);
+  const queryClient = useQueryClient();
 
   const go = (path: string) => {
     setOpen(false);
@@ -28,7 +28,7 @@ export function AccountMenuPopover({ initials, userEmail }: AccountMenuPopoverPr
     setLogoutBusy(true);
     try {
       await authService.logout();
-      clearAuth();
+      queryClient.clear();
       setOpen(false);
       void message.success("Logged out");
     } catch {

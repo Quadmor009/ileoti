@@ -16,8 +16,7 @@ const CartDropDown = () => {
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
   const qc = useQueryClient();
-  const user = useAuthStore((s) => s.user);
-  const isLoggedIn = Boolean(user);
+  const isLoggedIn = useAuthStore((s) => Boolean(s.accessToken));
   const requestLogin = useLoginModalStore((s) => s.requestLogin);
   const setCart = useCartStore((s) => s.setCart);
   const guestItems = useCartStore((s) => s.guestItems);
