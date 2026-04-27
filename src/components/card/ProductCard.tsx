@@ -1,7 +1,7 @@
 import { Rate, message } from "antd";
 import type { MouseEvent } from "react";
 import { useMemo, useState } from "react";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ImagesAndIcons } from "../../shared/images-icons/ImagesAndIcons";
 import { useNavigate } from "react-router-dom";
 import { routes } from "../../shared/routes/routes";
@@ -31,17 +31,27 @@ interface ProductCardProps {
 
 const ProductCard = ({ product }: ProductCardProps) => {
   const navigate = useNavigate();
+  const qc = useQueryClient();
   const setCart = useCartStore((s) => s.setCart);
   const addGuestItem = useCartStore((s) => s.addGuestItem);
   const removeGuestItem = useCartStore((s) => s.removeGuestItem);
   const isLoggedIn = useAuthStore((s) => Boolean(s.accessToken));
-  const [wishlisted, setWishlisted] = useState(false);
+  const id = product.id;
+  const { data: wishlistData } = useQuery({
+    queryKey: ["wishlist"],
+    queryFn: wishlistService.getWishlist,
+    enabled: isLoggedIn,
+    staleTime: 20_000,
+  });
+  const wishlisted = useMemo(
+    () => Boolean(wishlistData?.items?.some((row) => row.productId === id)),
+    [wishlistData, id],
+  );
   const [giftBoxOpen, setGiftBoxOpen] = useState(false);
   const [personalMessageOpen, setPersonalMessageOpen] = useState(false);
   const [giftMessage, setGiftMessage] = useState("");
   const [quantity, setQuantity] = useState(0);
 
-  const id = product.id;
   const name = product.name;
   const image = primaryImage(product.images, "");
   const hasImage = Boolean(image);
@@ -66,6 +76,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
     onSuccess: (cart, nextQuantity) => {
       setCart(cart);
       setQuantity(nextQuantity);
+      void qc.invalidateQueries({ queryKey: ["cart"] });
     },
     onError: (e) => {
       void message.error(getApiErrorMessage(e));
@@ -80,7 +91,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
     }
     try {
       await wishlistService.toggleWishlist(id);
-      setWishlisted((prev) => !prev);
+      void qc.invalidateQueries({ queryKey: ["wishlist"] });
     } catch (error) {
       void message.error(getApiErrorMessage(error));
     }
@@ -175,12 +186,18 @@ const ProductCard = ({ product }: ProductCardProps) => {
               <button
                 type="button"
                 onClick={handleWishlistClick}
-                className="relative z-20 cursor-pointer"
+                aria-pressed={wishlisted}
+                aria-label={wishlisted ? "Remove from favourites" : "Add to favourites"}
+                className={`relative z-20 rounded-full p-1.5 transition-all duration-200 shadow-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white ${
+                  wishlisted
+                    ? "bg-[#80011D] ring-2 ring-white"
+                    : "bg-black/30 ring-1 ring-white/50 hover:bg-black/45"
+                }`}
               >
                 <img
                   src={ImagesAndIcons.lovelyRed}
                   alt=""
-                  className={wishlisted ? "opacity-100" : "opacity-60"}
+                  className="h-6 w-6 object-contain brightness-0 invert"
                 />
               </button>
             </div>
@@ -195,19 +212,25 @@ const ProductCard = ({ product }: ProductCardProps) => {
             <button
               type="button"
               onClick={handleWishlistClick}
-              className="relative z-20 cursor-pointer"
+              aria-pressed={wishlisted}
+              aria-label={wishlisted ? "Remove from favourites" : "Add to favourites"}
+              className={`relative z-20 rounded-full p-1.5 transition-all duration-200 shadow-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white ${
+                wishlisted
+                  ? "bg-[#80011D] ring-2 ring-white"
+                  : "bg-black/30 ring-1 ring-white/50 hover:bg-black/45"
+              }`}
             >
               <img
                 src={ImagesAndIcons.lovelyRed}
                 alt=""
-                className={wishlisted ? "opacity-100" : "opacity-60"}
+                className="h-6 w-6 object-contain brightness-0 invert"
               />
             </button>
           </div>
         )}
       </div>
       <div className="flex flex-col flex-1 min-h-0 w-full min-w-0">
-        <p className="text-sm sm:text-base lg:text-xl mb-0.5 font-medium text-black line-clamp-2 leading-snug">
+        <p className="text-sm sm:text-base lg:text-xl mb-0.5 font-medium text-black line-clamp-2 min-h-[2.75rem] sm:min-h-[3.25rem] lg:min-h-[4.25rem] leading-snug">
           {name}
         </p>
         <p className="text-xs sm:text-sm lg:text-xs mb-0.5 text-[#585858] font-medium line-clamp-1 shrink-0">
@@ -285,6 +308,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
           <PersonalMessageModal
             open={personalMessageOpen}
             setOpen={setPersonalMessageOpen}
+            initialDraft={giftMessage}
             onSubmitMessage={(msg) => setGiftMessage(msg)}
           />
         </>
