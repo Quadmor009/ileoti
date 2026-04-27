@@ -32,6 +32,7 @@ function refreshAccessToken(): Promise<string> {
 
 api.interceptors.request.use((config) => {
   const token = useAuthStore.getState().accessToken;
+  console.log("Request to:", config.url, "Token:", token ? "present" : "missing");
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }

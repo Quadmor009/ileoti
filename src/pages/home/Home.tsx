@@ -35,13 +35,7 @@ const Home = () => {
     isError: productsError,
   } = useQuery({
     queryKey: ["home-top-picks"],
-    queryFn: async () => {
-      const featured = await productService.getFeaturedProducts();
-      if (featured.data.length > 0) {
-        return featured;
-      }
-      return productService.getProducts({ page: 1, limit: 5 });
-    },
+    queryFn: () => productService.getProducts({ limit: 5, page: 1 }),
   });
 
   const { data: categories } = useQuery({
@@ -78,9 +72,7 @@ const Home = () => {
             <p className="text-center text-red-600 py-6">Failed to load products</p>
           )}
           {!productsLoading && !productsError && featuredProducts.length === 0 && (
-            <p className="text-center text-[#585858] py-6">
-              No products available right now.
-            </p>
+            <p className="text-center text-[#585858] py-6">No products available</p>
           )}
           {featuredProducts.map((product) => (
             <ProductCard key={product.id} product={product} />

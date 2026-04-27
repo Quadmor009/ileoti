@@ -58,6 +58,7 @@ export const authService = {
 
   updateAddress: (id: string, data: Partial<AddressPayload>) =>
     api.put(`${BASE}/profile/addresses/${id}`, data).then((r) => r.data),
+  logout,
 };
 
 export function getRememberedEmail(): string | undefined {

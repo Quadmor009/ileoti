@@ -223,6 +223,41 @@ const Products = () => {
           />
         </div>
       </div>
+      <div className="max-w-270 w-[90%] mx-auto mb-6 overflow-x-auto no-scrollbar">
+        <div className="flex items-center gap-3 min-w-max">
+          <button
+            type="button"
+            onClick={() => {
+              setSelectedCategory(undefined);
+              setCurrentPage(1);
+            }}
+            className={`px-4 py-2 rounded-full border text-sm ${
+              !selectedCategory
+                ? "bg-primary text-white border-primary"
+                : "bg-white text-black border-[#D9D9D9]"
+            }`}
+          >
+            All
+          </button>
+          {(categories ?? []).map((category) => (
+            <button
+              key={category.id}
+              type="button"
+              onClick={() => {
+                setSelectedCategory(category.id);
+                setCurrentPage(1);
+              }}
+              className={`px-4 py-2 rounded-full border text-sm ${
+                selectedCategory === category.id
+                  ? "bg-primary text-white border-primary"
+                  : "bg-white text-black border-[#D9D9D9]"
+              }`}
+            >
+              {category.name}
+            </button>
+          ))}
+        </div>
+      </div>
 
       {/* Products grid */}
       {isLoading && (

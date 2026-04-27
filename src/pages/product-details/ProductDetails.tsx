@@ -3,7 +3,7 @@ import Navbar from "../../components/navbar/Navbar";
 import Footer from "../../components/footer/Footer";
 import Button from "../../components/btns/Button";
 import Lovelyred from "../../assets/icons/lovelyred";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import RightHandSideProductDetail from "./component/RightHand";
 import ProductCard from "../../components/card/ProductCard";
 import RefundPolicy from "./component/RefundPolicy";
@@ -16,7 +16,7 @@ import { cartService } from "../../services/cart.service";
 import { wishlistService } from "../../services/wishlist.service";
 import { useAuthStore } from "../../store/auth.store";
 import { useCartStore } from "../../store/cart.store";
-import { effectivePrice, formatDate, formatNGN, primaryImage } from "../../lib/format";
+import { formatDate, formatNGN, primaryImage } from "../../lib/format";
 import { ImagesAndIcons } from "../../shared/images-icons/ImagesAndIcons";
 import GiftBoxModal from "../../components/gift-box-modal/GiftboxModal";
 import PersonalMessageModal from "../../components/gift-box-modal/PersonalMessageModal";
@@ -32,7 +32,6 @@ export default function ProductDetailsPage() {
   const [personalMessageOpen, setPersonalMessageOpen] = useState(false);
   const [giftMessage, setGiftMessage] = useState("");
   const [quantity, setQuantity] = useState(1);
-  const [reviewPage, setReviewPage] = useState(1);
   const [wishlisted, setWishlisted] = useState(false);
   const isAuthenticated = useAuthStore((s) => Boolean(s.accessToken));
   const requestLogin = useLoginModalStore((s) => s.requestLogin);
@@ -46,8 +45,8 @@ export default function ProductDetailsPage() {
   });
 
   const { data: reviewsData } = useQuery({
-    queryKey: ["reviews", id, reviewPage],
-    queryFn: () => productService.getReviews(id!, reviewPage),
+    queryKey: ["reviews", id],
+    queryFn: () => productService.getReviews(id!),
     enabled: !!id,
   });
 
@@ -113,14 +112,12 @@ export default function ProductDetailsPage() {
 
   const reviews = reviewsData?.data ?? [];
   const relatedProducts = relatedData?.data?.filter((p) => p.id !== id).slice(0, 3) ?? [];
-
-  const sellPrice = product ? effectivePrice(product) : 35000;
-  const isDiscounted =
-    product?.discountedPrice != null &&
-    product.discountStart != null &&
-    product.discountEnd != null &&
-    Date.now() >= new Date(product.discountStart).getTime() &&
-    Date.now() <= new Date(product.discountEnd).getTime();
+  const sellPrice = Number(product?.discountedPrice ?? product?.price ?? 0);
+  const averageRating = useMemo(() => {
+    if (!reviews.length) return 0;
+    const total = reviews.reduce((sum, review) => sum + Number(review.rating ?? 0), 0);
+    return total / reviews.length;
+  }, [reviews]);
 
   if (isLoading) {
     return (
@@ -156,10 +153,16 @@ export default function ProductDetailsPage() {
         </p>
         <div className="py-9 grid grid-cols-1 lg:grid-cols-2 gap-16">
           <div>
-            <RightHandSideProductDetail
-              images={product.images}
-              primaryImage={primaryImage(product.images, ImagesAndIcons.furasgnBottle)}
-            />
+            {product.images?.length ? (
+              <RightHandSideProductDetail
+                images={product.images}
+                primaryImage={primaryImage(product.images, ImagesAndIcons.furasgnBottle)}
+              />
+            ) : (
+              <div className="flex h-166 w-[90%] mx-auto lg:w-full rounded-3xl items-center justify-center bg-[#8B0000] text-white text-4xl font-semibold">
+                {product.name.slice(0, 2).toUpperCase()}
+              </div>
+            )}
             <p className="hidden lg:block text-3xl text-black font-bold mt-9 mb-6">
               You may also like
             </p>
@@ -181,7 +184,9 @@ export default function ProductDetailsPage() {
                     <div className="flex-1">
                       <p className="text-xl font-bold">{p.name}</p>
                       <p className="text-[#585858]">{p.category?.name}</p>
-                      <p className="font-semibold">{formatNGN(effectivePrice(p))}</p>
+                      <p className="font-semibold">
+                        {formatNGN(p.discountedPrice ?? p.price)}
+                      </p>
                       <button
                         type="button"
                         className="mt-3 h-10 rounded-full bg-primary px-5 text-sm text-white"
@@ -222,13 +227,13 @@ export default function ProductDetailsPage() {
             </div>
 
             <div className="flex items-center gap-2 mt-2">
-              <Rate disabled defaultValue={4} />
-              <span className="text-gray-600 text-sm">({reviews.length > 0 ? reviewsData?.total : 0})</span>
+              <Rate disabled value={averageRating} allowHalf />
+              <span className="text-gray-600 text-sm">({reviewsData?.total ?? 0})</span>
             </div>
 
             <div className="flex items-center gap-3 mt-3">
               <p className="text-3xl font-semibold text-black">{formatNGN(sellPrice)}</p>
-              {isDiscounted && (
+              {product.discountedPrice != null && (
                 <p className="text-xl font-normal text-[#585858] line-through">
                   {formatNGN(product.price)}
                 </p>
@@ -272,11 +277,11 @@ export default function ProductDetailsPage() {
             <div className="flex-col lg:hidden">
               <p className="font-bold text-base mt-6 text-black">You May Also Like</p>
               <div className="flex gap-4 overflow-x-auto">
-                {relatedProducts.length === 0
-                  ? [1, 2, 3, 4].map((i) => <div key={i}><ProductCard /></div>)
-                  : relatedProducts.map((p) => (
-                      <div key={p.id}><ProductCard product={p} /></div>
-                    ))}
+                {relatedProducts.map((p) => (
+                  <div key={p.id}>
+                    <ProductCard product={p} onLoginRequired={requestLogin} />
+                  </div>
+                ))}
               </div>
             </div>
 
@@ -324,7 +329,6 @@ export default function ProductDetailsPage() {
               {(reviewsData?.total ?? 0) > 3 && (
                 <Button
                   handleClick={() => {
-                    setReviewPage((p) => p + 1);
                     setOpen(true);
                   }}
                   type="lightRed"

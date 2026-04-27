@@ -5,6 +5,13 @@ import { ImagesAndIcons } from "../../../shared/images-icons/ImagesAndIcons";
 import Topbar from "../top-bar/Topbar";
 
 const Dashboard = () => {
+  const demoProducts = [
+    { id: "demo-1", name: "Deanston 12 Year Old", price: 40000 },
+    { id: "demo-2", name: "Single Malt Whisky", price: 38000 },
+    { id: "demo-3", name: "London Dry Gin", price: 22000 },
+    { id: "demo-4", name: "Premium Rum", price: 18000 },
+  ];
+
   return (
     <div>
       <Navbar />
@@ -84,10 +91,9 @@ const Dashboard = () => {
         </div>
         <h4 className="text-2xl font-bold mt-8">Personalized For You</h4>
         <div className="flex items-center gap-7.5">
-          <ProductCard />
-          <ProductCard />
-          <ProductCard />
-          <ProductCard />
+          {demoProducts.map((product) => (
+            <ProductCard key={product.id} product={product} />
+          ))}
         </div>
       </div>
       <Footer />

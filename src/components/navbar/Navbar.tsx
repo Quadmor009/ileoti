@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Badge, Dropdown, message } from "antd";
 import { BellOutlined } from "@ant-design/icons";
@@ -9,7 +9,9 @@ import CartDropDown from "../../pages/cart/component/CartDropDown";
 import FavouritesDropDown from "../../pages/cart/component/Favourites";
 import Search from "../search/Search";
 import { useAuthStore } from "../../store/auth.store";
-import { logout } from "../../services/auth.service";
+import { authService } from "../../services/auth.service";
+import { cartService } from "../../services/cart.service";
+import { useCartStore } from "../../store/cart.store";
 import {
   getNotifications,
   markAllAsRead,
@@ -52,11 +54,24 @@ function formatNotifTime(iso: string) {
 const Navbar = () => {
   const navigate = useNavigate();
   const qc = useQueryClient();
-  const accessToken = useAuthStore((s) => s.accessToken);
-  const user = useAuthStore((s) => s.user);
-  const isLoggedIn = Boolean(accessToken);
+  const { user, clearAuth } = useAuthStore();
+  const isLoggedIn = Boolean(user);
+  const itemCount = useCartStore((s) => s.itemCount);
+  const setCart = useCartStore((s) => s.setCart);
   const [logoutBusy, setLogoutBusy] = useState(false);
   const [searchDraft, setSearchDraft] = useState("");
+
+  useEffect(() => {
+    if (!isLoggedIn) return;
+    void (async () => {
+      try {
+        const cart = await cartService.getCart();
+        setCart(cart);
+      } catch {
+        // avoid noisy navbar errors during page load
+      }
+    })();
+  }, [isLoggedIn, setCart]);
 
   const { data: notifData } = useQuery({
     queryKey: ["notifications", "nav"],
@@ -85,7 +100,8 @@ const Navbar = () => {
   const handleLogout = async () => {
     setLogoutBusy(true);
     try {
-      await logout();
+      await authService.logout();
+      clearAuth();
       void message.success("Logged out");
     } catch {
       void message.error("Could not log out. Please try again.");
@@ -175,7 +191,14 @@ const Navbar = () => {
           </Dropdown>
           <div className="flex items-center gap-2">
             <FavouritesDropDown />
-            <CartDropDown />
+            <Badge
+              count={itemCount > 0 ? itemCount : 0}
+              size="small"
+              offset={[-3, 3]}
+              styles={{ indicator: { backgroundColor: "#B00020" } }}
+            >
+              <CartDropDown />
+            </Badge>
           </div>
           <div
             className="w-10 h-10 bg-black rounded-full flex items-center justify-center text-white text-sm font-semibold"
