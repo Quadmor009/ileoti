@@ -11,6 +11,7 @@ import { useLoginModalStore } from "../../store/login-modal.store";
 import { cartService } from "../../services/cart.service";
 import { useCartStore } from "../../store/cart.store";
 import { getApiErrorMessage } from "../../lib/api-error";
+import axios from "axios";
 
 interface ProductCardProps {
   product?: Product;
@@ -58,6 +59,26 @@ const ProductCard = ({ product }: ProductCardProps = {}) => {
       setCart(cart);
       void message.success("Added to cart");
     } catch (error) {
+      if (axios.isAxiosError(error) && error.response?.status === 403) {
+        message.open({
+          type: "warning",
+          duration: 6,
+          content: (
+            <span>
+              Please complete your profile with your date of birth to verify
+              your age.{" "}
+              <button
+                type="button"
+                className="underline"
+                onClick={() => navigate(routes.profile)}
+              >
+                Go to profile
+              </button>
+            </span>
+          ),
+        });
+        return;
+      }
       void message.error(getApiErrorMessage(error));
     }
   };
