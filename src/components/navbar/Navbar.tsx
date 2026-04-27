@@ -56,7 +56,6 @@ const Navbar = () => {
   const qc = useQueryClient();
   const { user, clearAuth } = useAuthStore();
   const isLoggedIn = Boolean(user);
-  const itemCount = useCartStore((s) => s.itemCount);
   const setCart = useCartStore((s) => s.setCart);
   const [logoutBusy, setLogoutBusy] = useState(false);
   const [searchDraft, setSearchDraft] = useState("");
@@ -192,14 +191,7 @@ const Navbar = () => {
           </Dropdown>
           <div className="flex items-center gap-2">
             <FavouritesDropDown />
-            <div className="relative overflow-visible">
-              <CartDropDown />
-              {itemCount > 0 && (
-                <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full bg-[#8B0000] text-white text-[10px] font-bold leading-[18px] text-center">
-                  {itemCount}
-                </span>
-              )}
-            </div>
+            <CartDropDown />
           </div>
           <div
             className="w-10 h-10 bg-black rounded-full flex items-center justify-center text-white text-sm font-semibold"

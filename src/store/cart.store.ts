@@ -1,46 +1,95 @@
-import { create } from "zustand";
-import type { Cart, CartItem } from "../types";
+import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
+
+export interface GuestCartItem {
+  productId: string;
+  name: string;
+  price: number;
+  image: string;
+  quantity: number;
+  category?: string;
+}
 
 interface CartState {
-  itemCount: number;
+  // Guest cart (works without login)
+  guestItems: GuestCartItem[];
+  // Logged-in cart from API
   items: any[];
+  itemCount: number;
   total: number;
+  isLoggedIn: boolean;
+  // Guest cart actions
+  addGuestItem: (item: GuestCartItem) => void;
+  removeGuestItem: (productId: string) => void;
+  updateGuestItem: (productId: string, quantity: number) => void;
+  clearGuestCart: () => void;
+  // API cart actions
   setCart: (cartData: any) => void;
   clearCart: () => void;
+  setLoggedIn: (v: boolean) => void;
 }
 
-function computeTotal(items: CartItem[]): number {
-  return items.reduce((sum, item) => {
-    const discountedPrice = Number(item.product?.discountedPrice ?? 0);
-    const regularPrice = Number(item.product?.price ?? 0);
-    const price = discountedPrice > 0 ? discountedPrice : regularPrice;
-    return sum + price * item.quantity;
-  }, 0);
-}
+export const useCartStore = create<CartState>()(
+  persist(
+    (set, get) => ({
+      guestItems: [],
+      items: [],
+      itemCount: 0,
+      total: 0,
+      isLoggedIn: false,
 
-function extractItems(cartData: any): CartItem[] {
-  if (Array.isArray(cartData?.items)) {
-    return cartData.items as CartItem[];
-  }
-  return [];
-}
+      addGuestItem: (item) => {
+        const existing = get().guestItems.find(i => i.productId === item.productId);
+        let guestItems: GuestCartItem[];
+        if (existing) {
+          guestItems = get().guestItems.map(i =>
+            i.productId === item.productId
+              ? { ...i, quantity: i.quantity + item.quantity }
+              : i
+          );
+        } else {
+          guestItems = [...get().guestItems, item];
+        }
+        const itemCount = guestItems.reduce((sum, i) => sum + i.quantity, 0);
+        const total = guestItems.reduce((sum, i) => sum + i.price * i.quantity, 0);
+        set({ guestItems, itemCount, total });
+      },
 
-function extractTotal(cartData: any, items: CartItem[]): number {
-  if (typeof cartData?.total === "number") {
-    return cartData.total;
-  }
-  return computeTotal(items);
-}
+      removeGuestItem: (productId) => {
+        const guestItems = get().guestItems.filter(i => i.productId !== productId);
+        const itemCount = guestItems.reduce((sum, i) => sum + i.quantity, 0);
+        const total = guestItems.reduce((sum, i) => sum + i.price * i.quantity, 0);
+        set({ guestItems, itemCount, total });
+      },
 
-export const useCartStore = create<CartState>((set) => ({
-  items: [],
-  total: 0,
-  itemCount: 0,
-  setCart: (cartData: Cart | any) => {
-    const items = extractItems(cartData);
-    const itemCount = items.reduce((sum, item) => sum + Number(item.quantity ?? 0), 0);
-    const total = extractTotal(cartData, items);
-    set({ items, itemCount, total });
-  },
-  clearCart: () => set({ items: [], total: 0, itemCount: 0 }),
-}));
+      updateGuestItem: (productId, quantity) => {
+        if (quantity <= 0) {
+          get().removeGuestItem(productId);
+          return;
+        }
+        const guestItems = get().guestItems.map(i =>
+          i.productId === productId ? { ...i, quantity } : i
+        );
+        const itemCount = guestItems.reduce((sum, i) => sum + i.quantity, 0);
+        const total = guestItems.reduce((sum, i) => sum + i.price * i.quantity, 0);
+        set({ guestItems, itemCount, total });
+      },
+
+      clearGuestCart: () => set({ guestItems: [], itemCount: 0, total: 0 }),
+
+      setCart: (cartData: any) => {
+        const items = cartData?.items ?? [];
+        const itemCount = items.reduce((sum: number, i: any) => sum + (i.quantity ?? 1), 0);
+        const total = items.reduce((sum: number, i: any) => sum + (Number(i.product?.price ?? 0) * (i.quantity ?? 1)), 0);
+        set({ items, itemCount, total });
+      },
+
+      clearCart: () => set({ items: [], guestItems: [], itemCount: 0, total: 0 }),
+      setLoggedIn: (v) => set({ isLoggedIn: v }),
+    }),
+    {
+      name: 'cart-storage',
+      partialize: (state) => ({ guestItems: state.guestItems }),
+    }
+  )
+);

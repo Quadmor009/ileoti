@@ -35,6 +35,8 @@ const ProductCard = ({ product }: ProductCardProps) => {
   const user = useAuthStore((s) => s.user);
   const requestLogin = useLoginModalStore((s) => s.requestLogin);
   const setCart = useCartStore((s) => s.setCart);
+  const addGuestItem = useCartStore((s) => s.addGuestItem);
+  const removeGuestItem = useCartStore((s) => s.removeGuestItem);
   const isLoggedIn = Boolean(user);
   const [wishlisted, setWishlisted] = useState(false);
   const [giftBoxOpen, setGiftBoxOpen] = useState(false);
@@ -63,11 +65,10 @@ const ProductCard = ({ product }: ProductCardProps) => {
     mutationFn: (nextQuantity: number) => cartService.addToCart(id, nextQuantity),
     onSuccess: (cart, nextQuantity) => {
       setCart(cart);
-      // Ensure UI switches to quantity mode after successful first add.
-      setQuantity(nextQuantity === 1 ? 1 : nextQuantity);
+      setQuantity(nextQuantity);
     },
-    onError: (error) => {
-      void message.error(getApiErrorMessage(error));
+    onError: () => {
+      void message.error('Could not add to cart');
     },
   });
 
@@ -96,43 +97,58 @@ const ProductCard = ({ product }: ProductCardProps) => {
 
   const handleAddToCartClick = (e: MouseEvent<HTMLButtonElement>, newQuantity: number) => {
     e.stopPropagation();
-    if (!isLoggedIn) {
-      requestLogin();
-      return;
+    if (isLoggedIn) {
+      // Logged in: call API
+      addToCartMutation.mutate(newQuantity);
+    } else {
+      // Guest: add to local store
+      addGuestItem({
+        productId: id,
+        name: product.name,
+        price: sellingPrice,
+        image: image,
+        quantity: 1,
+        category: product.category?.name,
+      });
+      setQuantity(newQuantity);
+      void message.success('Added to cart');
     }
-    addToCartMutation.mutate(newQuantity);
   };
 
   const handleDecrement = async (e: MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
-    if (!isLoggedIn) {
-      requestLogin();
-      return;
-    }
-    if (addToCartMutation.isPending) return;
     const next = Math.max(quantity - 1, 0);
-    try {
+    if (isLoggedIn) {
       if (next === 0) {
-        const cart = await cartService.removeFromCart(id);
-        setCart(cart);
-        setQuantity(0);
+        try {
+          const cart = await cartService.removeFromCart(id);
+          setCart(cart);
+          setQuantity(0);
+        } catch {
+          void message.error('Could not remove from cart');
+        }
       } else {
         addToCartMutation.mutate(next);
       }
-    } catch (error) {
-      void message.error(getApiErrorMessage(error));
+    } else {
+      if (next === 0) {
+        removeGuestItem(id);
+      } else {
+        useCartStore.getState().updateGuestItem(id, next);
+      }
+      setQuantity(next);
     }
   };
 
   const handleIncrement = async (e: MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
-    if (!isLoggedIn) {
-      requestLogin();
-      return;
-    }
-    if (addToCartMutation.isPending) return;
     const next = quantity + 1;
-    addToCartMutation.mutate(next);
+    if (isLoggedIn) {
+      addToCartMutation.mutate(next);
+    } else {
+      useCartStore.getState().updateGuestItem(id, next);
+      setQuantity(next);
+    }
   };
 
   return (
