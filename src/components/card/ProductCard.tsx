@@ -112,16 +112,16 @@ const ProductCard = ({ product }: ProductCardProps = {}) => {
           </p>
         )}
       </div>
-      <div className="flex gap-2 items-center">
+      <div className="flex items-center gap-2 w-full">
         <button
           onClick={handleAddToCartClick}
-          className="text-xs text-white bg-primary rounded-[56px] px-6 lg:px-[50px] py-2 lg:py-4"
+          className="flex-1 text-xs text-white bg-primary rounded-[56px] px-6 py-2 lg:py-4"
         >
           Add To Cart
         </button>
         <button
           onClick={(e) => e.stopPropagation()}
-          className="lg:h-12 h-8 w-8 lg:w-12 rounded-full flex justify-center items-center border border-[#80011D]"
+          className="shrink-0 lg:h-12 h-8 w-8 lg:w-12 rounded-full flex justify-center items-center border border-[#80011D]"
         >
           <img src={ImagesAndIcons.giftBox} alt="" />
         </button>
