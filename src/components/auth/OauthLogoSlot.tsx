@@ -1,13 +1,13 @@
-/** Continue-with-Google area: light frame + Ile Oti red logo (SVGs scale; share a 2–3× PNG only if it looks soft). */
+/** Continue-with-Google: logo-only control (no outer stroke on modals). */
 export function OauthLogoSlot({ onClick, ariaLabel }: { onClick: () => void; ariaLabel: string }) {
   return (
     <button
       type="button"
-      className="w-[180px] h-[88px] rounded-[22px] bg-white border border-[#E5E5E5] flex items-center justify-center px-4"
+      className="bg-transparent border-0 shadow-none outline-none flex items-center justify-center p-0"
       onClick={onClick}
       aria-label={ariaLabel}
     >
-      <img src="/logos/red-logo.svg" alt="" className="h-16 w-auto max-h-[64px] object-contain" />
+      <img src="/logos/red-logo.svg" alt="" className="h-20 w-auto object-contain" />
     </button>
   );
 }

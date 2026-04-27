@@ -115,7 +115,7 @@ const OtpLogin = ({ isModalOpen, handleCancel, email }: OtpLoginProps) => {
         <Button
           type="red"
           label={verifyLoading ? "Verifying…" : "Sign Up"}
-          className="font-semibold  rounded-[55px] py-6 text-xl my-8"
+          className="font-semibold rounded-[55px] py-6 text-sm my-8"
           handleClick={() => void handleVerify()}
         />
         <div className="flex items-center justify-center">

@@ -59,7 +59,7 @@ const SignUp = () => {
           setPostLoginRedirect(`${location.pathname}${location.search}`);
           setIsModalOpen(true);
         }}
-        className="text-sm font-medium text-black"
+        className="border border-[#80011D] text-[#80011D] rounded-[100px] px-6 h-10 text-sm font-medium hover:bg-[#80011D] hover:text-white transition-colors"
       >
         Sign Up
       </button>
@@ -103,7 +103,7 @@ const SignUp = () => {
           <Button
             type="red"
             label={sendLoading ? "Sending…" : "Sign Up"}
-            className="font-semibold  rounded-[55px] py-6 text-xl my-11"
+            className="font-semibold rounded-[55px] py-6 text-sm my-11"
             handleClick={() => void handleSendOtp()}
           />
           <div className="flex items-center justify-center">
