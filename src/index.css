@@ -5,3 +5,7 @@
         box-shadow: none;
         padding: 4px 8px;
 }
+
+button {
+  max-height: 56px;
+}

@@ -115,7 +115,7 @@ const ProductCard = ({ product }: ProductCardProps = {}) => {
       <div className="flex items-center gap-2 w-full">
         <button
           onClick={handleAddToCartClick}
-          className="flex-1 text-xs text-white bg-primary rounded-[56px] px-6 py-2 lg:py-4"
+          className="flex-1 h-14 text-xs text-white bg-primary rounded-[56px] px-6"
         >
           Add To Cart
         </button>

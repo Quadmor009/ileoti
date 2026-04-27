@@ -16,12 +16,12 @@ const Button = ({
   justIcon = false,
 }: btnType) => {
   const styles = {
-    white: `bg-white rounded-[56px] cursor-pointer py-2 md:py-3 text-xs md:text-base font-semibold  w-full`,
-    red: `bg-primary cursor-pointer  text-white w-full flex items-center justify-center gap-1`,
-    transparent: `border border-white text-white bg-transparent w-full rounded-[56px] cursor-pointer py-2 md:py-3 text-xs md:text-base font-semibold`,
-    lightRed: `text-primary bg-[#F4EEEE] w-full rounded-[56px] cursor-pointer py-6 text-xs md:text-base font-semibold`,
-    outlineRed: `border border-[#80011D] text-[#80011D] bg-transparent w-full rounded-[56px] cursor-pointer py-2 md:py-3 text-xs flex items-center gap-2 justify-center lg:py-6 md:text-base font-semibold`,
-    ashIcon: `border border-[#D8D8D8] text-black flex items-center gap-1 bg-transparent  cursor-pointer p-4 text-xs font-medium ${
+    white: `bg-white rounded-[56px] cursor-pointer h-14 text-xs md:text-base font-semibold w-full`,
+    red: `bg-primary cursor-pointer text-white w-full h-14 flex items-center justify-center gap-1`,
+    transparent: `border border-white text-white bg-transparent w-full rounded-[56px] cursor-pointer h-14 text-xs md:text-base font-semibold`,
+    lightRed: `text-primary bg-[#F4EEEE] w-full rounded-[56px] cursor-pointer h-14 text-xs md:text-base font-semibold`,
+    outlineRed: `border border-[#80011D] text-[#80011D] bg-transparent w-full rounded-[56px] cursor-pointer h-14 text-xs flex items-center gap-2 justify-center md:text-base font-semibold`,
+    ashIcon: `border border-[#D8D8D8] text-black flex items-center gap-1 bg-transparent cursor-pointer p-4 max-h-14 text-xs font-medium ${
       justIcon ? "rounded-full" : "rounded-3xl"
     }`,
   };
