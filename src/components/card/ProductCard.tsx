@@ -13,6 +13,7 @@ const ProductCard = ({ product }: ProductCardProps = {}) => {
   const navigate = useNavigate();
 
   const id = product?.id;
+  console.log("product id:", product?.id);
   const name = product?.name ?? "Deanston 12 Year Old";
   const image = primaryImage(product?.images, ImagesAndIcons.furasgnBottle);
   const price = product ? effectivePrice(product) : 40000;
@@ -24,14 +25,23 @@ const ProductCard = ({ product }: ProductCardProps = {}) => {
     Date.now() <= new Date(product.discountEnd).getTime();
   const avgRating = 4;
 
+  const handleCardClick = () => {
+    if (!id) return;
+    navigate(`${routes.products}/${id}`);
+  };
+
   return (
     <div
-      onClick={() => {
-        if (id) {
-          navigate(`${routes.products}/${id}`);
+      onClick={handleCardClick}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          handleCardClick();
         }
       }}
-      className="border border-transparent lg:hover:border-[#80011D] lg:hover:bg-[#F4EEEE] p-2 rounded-3xl transition-all duration-300 ease-in-out"
+      className="cursor-pointer border border-transparent lg:hover:border-[#80011D] lg:hover:bg-[#F4EEEE] p-2 rounded-3xl transition-all duration-300 ease-in-out"
     >
       <div
         style={{
