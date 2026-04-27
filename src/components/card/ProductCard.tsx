@@ -12,7 +12,7 @@ interface ProductCardProps {
 const ProductCard = ({ product }: ProductCardProps = {}) => {
   const navigate = useNavigate();
 
-  const id = product?.id ?? "2";
+  const id = product?.id;
   const name = product?.name ?? "Deanston 12 Year Old";
   const image = primaryImage(product?.images, ImagesAndIcons.furasgnBottle);
   const price = product ? effectivePrice(product) : 40000;
@@ -26,7 +26,11 @@ const ProductCard = ({ product }: ProductCardProps = {}) => {
 
   return (
     <div
-      onClick={() => navigate(`${routes.products}/${id}`)}
+      onClick={() => {
+        if (id) {
+          navigate(`${routes.products}/${id}`);
+        }
+      }}
       className="border border-transparent lg:hover:border-[#80011D] lg:hover:bg-[#F4EEEE] p-2 rounded-3xl transition-all duration-300 ease-in-out"
     >
       <div
