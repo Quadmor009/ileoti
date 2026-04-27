@@ -2,6 +2,8 @@ import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { fetchProfile } from "../../services/auth.service";
 import { useAuthStore } from "../../store/auth.store";
+import { useCartStore } from "../../store/cart.store";
+import { cartService } from "../../services/cart.service";
 import { takePathForOAuthReturn } from "../../lib/post-login-redirect";
 
 export default function AuthCallback() {
@@ -20,6 +22,14 @@ export default function AuthCallback() {
     const run = async () => {
       const returnTo = takePathForOAuthReturn();
       useAuthStore.getState().setAuth(token, null);
+      // Merge guest cart now that auth token is set
+      const guestItems = useCartStore.getState().guestItems;
+      if (guestItems.length > 0) {
+        await Promise.allSettled(
+          guestItems.map((item) => cartService.addToCart(item.productId, item.quantity))
+        );
+        useCartStore.getState().clearGuestCart();
+      }
       try {
         const user = await fetchProfile();
         useAuthStore.getState().setAuth(token, user);

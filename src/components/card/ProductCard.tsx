@@ -175,6 +175,8 @@ const ProductCard = ({ product }: ProductCardProps) => {
       <div className="relative w-full aspect-[246/306] shrink-0 mb-3 rounded-2xl overflow-hidden bg-[#f5f5f5]">
         {hasImage ? (
           <div
+            role="img"
+            aria-label={name}
             style={{
               backgroundImage: `url(${image})`,
               backgroundSize: "cover",

@@ -6,7 +6,7 @@ import { ImagesAndIcons } from "../../../shared/images-icons/ImagesAndIcons";
 import { useCartStore } from "../../../store/cart.store";
 import { useAuthStore } from "../../../store/auth.store";
 import { useLoginModalStore } from "../../../store/login-modal.store";
-import { formatNGN, primaryImage } from "../../../lib/format";
+import { effectivePrice, formatNGN, primaryImage } from "../../../lib/format";
 import { routes } from "../../../shared/routes/routes";
 import { cartService } from "../../../services/cart.service";
 import { getApiErrorMessage } from "../../../lib/api-error";
@@ -75,7 +75,7 @@ const CartDropDown = () => {
               displayItems.map((item: any) => {
                 const productId = item.productId ?? item.product?.id;
                 const name = item.name ?? item.product?.name ?? "Product";
-                const price = item.price ?? Number(item.product?.price ?? 0);
+                const price = item.price != null ? item.price : effectivePrice(item.product ?? {});
                 const qty = item.quantity ?? 1;
                 const image =
                   item.image ??

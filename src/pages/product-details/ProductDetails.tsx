@@ -281,7 +281,7 @@ export default function ProductDetailsPage() {
                     onClick={() => navigate(`/products/${p.id}`)}
                   >
                     <img
-                      className="w-55 h-55 rounded-3xl"
+                      className="w-55 h-55 rounded-3xl object-cover"
                       src={primaryImage(p.images, ImagesAndIcons.furasgnBottle)}
                       alt={p.name}
                     />
