@@ -207,7 +207,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
         )}
       </div>
       <div className="flex flex-col flex-1 min-h-0 w-full min-w-0">
-        <p className="text-sm sm:text-base lg:text-xl mb-0.5 font-medium text-black line-clamp-2 min-h-[2.75rem] sm:min-h-[3.25rem] lg:min-h-[4.25rem] leading-snug">
+        <p className="text-sm sm:text-base lg:text-xl mb-0.5 font-medium text-black line-clamp-2 leading-snug">
           {name}
         </p>
         <p className="text-xs sm:text-sm lg:text-xs mb-0.5 text-[#585858] font-medium line-clamp-1 shrink-0">
