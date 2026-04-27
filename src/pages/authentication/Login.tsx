@@ -116,7 +116,7 @@ const Login = () => {
           <Button
             type="red"
             label={sendLoading ? "Sending…" : "Log In"}
-            className="font-semibold rounded-[100px] h-14 text-xl my-11"
+            className="font-semibold rounded-[100px] h-14 text-sm my-11"
             handleClick={() => void handleSendOtp()}
           />
           <div className="flex items-center justify-center">
