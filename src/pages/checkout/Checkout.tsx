@@ -363,6 +363,7 @@ const Checkout = () => {
                   label={payMutation.isPending ? "Redirecting…" : "Make payment"}
                   className="lg:py-6 text-base lg:text-xl py-3 font-semibold rounded-[55px] mt-4"
                   handleClick={() => payMutation.mutate()}
+                  disabled={payMutation.isPending}
                 />
               </>
             )}

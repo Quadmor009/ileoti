@@ -5,6 +5,7 @@ interface btnType {
   className?: string;
   icon?: string;
   justIcon?: boolean;
+  disabled?: boolean;
 }
 
 const Button = ({
@@ -14,6 +15,7 @@ const Button = ({
   className,
   icon,
   justIcon = false,
+  disabled = false,
 }: btnType) => {
   const styles = {
     white: `bg-white rounded-[56px] cursor-pointer h-14 text-xs md:text-base font-semibold w-full inline-flex items-center justify-center gap-2`,
@@ -45,7 +47,8 @@ const Button = ({
     <button
       type="button"
       onClick={handleClick}
-      className={`${getClass(type)} ${className ?? ""}`.trim()}
+      disabled={disabled}
+      className={`${getClass(type)} ${className ?? ""} ${disabled ? "opacity-60 cursor-not-allowed" : ""}`.trim()}
     >
       <span className="inline-flex min-w-0 items-center justify-center gap-2">
         {label ? <span className="min-w-0 text-center leading-snug">{label}</span> : null}

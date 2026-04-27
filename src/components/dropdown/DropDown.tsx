@@ -12,7 +12,6 @@ const DropDown = (props: DeviceGadgetActionProps) => {
 
   const handleOpenChange = (newOpen: boolean) => {
     setOpen(newOpen);
-    console.log("hardaer");
   };
 
   return (
