@@ -28,7 +28,11 @@ const OrderCompleted = ({ orders, isLoading }: OrderCompletedProps) => {
   }
 
   if (orders.length === 0) {
-    return <p className="text-[#585858] px-5">No completed orders.</p>;
+    return (
+      <div className="rounded-2xl border border-dashed border-[#E0E0E0] bg-[#FAFAFA] px-6 py-12 text-center text-[#585858]">
+        <p className="max-w-md mx-auto">No past or closed orders yet. Finished deliveries and cancelled orders will land here.</p>
+      </div>
+    );
   }
 
   return (

@@ -8,8 +8,7 @@ import RightHandSideProductDetail from "./component/RightHand";
 import ProductCard from "../../components/card/ProductCard";
 import RefundPolicy from "./component/RefundPolicy";
 import ReviewsModal from "./component/ReviewsModal";
-import { useParams } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { productService } from "../../services/product.service";
 import { cartService } from "../../services/cart.service";
@@ -233,10 +232,29 @@ export default function ProductDetailsPage() {
     <div>
       <Navbar />
       <div className="max-w-[1200px] mx-auto">
-        <p className="text-base text-[#585858] font-normal mt-10">
-          Home {">"} Products {">"}{" "}
-          <span className="text-[#8B0000]">{product.name}</span>
-        </p>
+        <nav className="text-base text-[#585858] font-normal mt-10" aria-label="Breadcrumb">
+          <ol className="flex flex-wrap items-center gap-x-1.5 gap-y-1">
+            <li>
+              <Link to={routes.home} className="hover:text-[#80011D] underline-offset-2 hover:underline">
+                Home
+              </Link>
+            </li>
+            <li aria-hidden className="text-[#C4C4C4]">
+              ›
+            </li>
+            <li>
+              <Link to={routes.products} className="hover:text-[#80011D] underline-offset-2 hover:underline">
+                Products
+              </Link>
+            </li>
+            <li aria-hidden className="text-[#C4C4C4]">
+              ›
+            </li>
+            <li className="text-[#8B0000] font-medium truncate max-w-[min(100%,28rem)]" aria-current="page">
+              {product.name}
+            </li>
+          </ol>
+        </nav>
         <div className="py-9 grid grid-cols-1 lg:grid-cols-2 gap-16">
           <div>
             {product.images?.length ? (

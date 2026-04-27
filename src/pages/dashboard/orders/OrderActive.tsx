@@ -37,7 +37,11 @@ const OrderActive = ({ orders, isLoading }: OrderActiveProps) => {
   }
 
   if (orders.length === 0) {
-    return <p className="text-[#585858] px-5">No active orders.</p>;
+    return (
+      <div className="rounded-2xl border border-dashed border-[#E0E0E0] bg-[#FAFAFA] px-6 py-12 text-center text-[#585858]">
+        <p className="max-w-md mx-auto">Nothing in this list right now. When you check out, progress will show here.</p>
+      </div>
+    );
   }
 
   return (

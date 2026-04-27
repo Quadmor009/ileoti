@@ -90,8 +90,8 @@ const Home = () => {
         </div>
         <div className="w-full mt-12 sm:mt-16 lg:mt-24 pt-8 sm:pt-10 pb-6 border-t border-[#E8E8E8]">
           <div className="max-w-[1300px] mx-auto w-[92%] sm:w-[90%]">
-            <div className="flex flex-col lg:flex-row lg:items-end gap-8 lg:gap-12">
-              <div className="shrink-0 lg:max-w-[min(100%,22rem)] lg:pb-1">
+            <div className="flex flex-col lg:flex-row lg:items-start gap-8 lg:gap-12">
+              <div className="shrink-0 lg:max-w-[min(100%,22rem)] lg:pt-1">
                 <p className="text-lg sm:text-xl text-black font-semibold">Categories</p>
                 <h4 className="text-[1.35rem] sm:text-[32px] lg:text-[40px] font-bold text-primary leading-[1.15] sm:leading-tight mt-2 sm:mt-3">
                   SHOP YOUR FAVOURITE CATEGORIES HERE...
@@ -108,7 +108,7 @@ const Home = () => {
                           backgroundSize: "cover",
                           backgroundPosition: "center",
                         }}
-                        className="relative w-[200px] sm:w-56 md:w-64 h-[280px] sm:h-80 md:h-[22rem] max-h-[400px] rounded-2xl transition-shadow duration-300 hover:shadow-xl hover:ring-2 hover:ring-primary/25 shrink-0 snap-start cursor-pointer overflow-hidden"
+                        className="relative w-[200px] sm:w-56 md:w-64 h-[280px] sm:h-80 md:h-[22rem] max-h-[400px] rounded-2xl transition-shadow duration-300 shadow-xl ring-2 ring-primary/25 lg:shadow-none lg:ring-0 lg:hover:shadow-xl lg:hover:ring-2 lg:hover:ring-primary/25 shrink-0 snap-start cursor-pointer overflow-hidden"
                         onClick={() => navigate(`/products?categoryId=${card.id}`)}
                         role="button"
                         tabIndex={0}

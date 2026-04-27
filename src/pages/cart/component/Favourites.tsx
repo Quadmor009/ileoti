@@ -1,4 +1,3 @@
-import { HeartOutlined } from "@ant-design/icons";
 import { Popover, message, Spin } from "antd";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
@@ -166,7 +165,12 @@ const FavouritesDropDown = () => {
         className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[#80011D] text-white shadow-sm transition-colors hover:bg-[#6B011A] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
         aria-label="Favourites"
       >
-        <HeartOutlined className="text-[1.35rem] text-white" />
+        <img
+          src={ImagesAndIcons.lovelyRed}
+          alt=""
+          className="h-8 w-8 object-contain drop-shadow-sm scale-90"
+          aria-hidden
+        />
       </button>
     </Popover>
   );

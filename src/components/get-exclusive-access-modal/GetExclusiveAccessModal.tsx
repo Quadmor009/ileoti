@@ -11,7 +11,6 @@ import {
 import { getApiErrorMessage } from "../../lib/api-error";
 import { useAuthStore } from "../../store/auth.store";
 import { useLoginModalStore } from "../../store/login-modal.store";
-import MembershipMoreInfo from "./MembershipMoreInfo";
 import { formatNGN } from "../../lib/format";
 
 export type GetExclusiveAccessModalProps = {
@@ -56,7 +55,6 @@ const GetExclusiveAccessModal = ({
 
   const requestLogin = useLoginModalStore((s) => s.requestLogin);
   const accessToken = useAuthStore((s) => s.accessToken);
-  const [moreOpen, setMoreOpen] = useState(false);
   const [selectedPlanId, setSelectedPlanId] = useState("");
   const [subscribing, setSubscribing] = useState(false);
 
@@ -115,10 +113,10 @@ const GetExclusiveAccessModal = ({
     <div>
       {!hideDefaultJoinButton ? (
         <Button
-          handleClick={() => setInternalOpen(true)}
+          handleClick={() => {}}
           type="white"
-          label="Join Membership"
-          className="text-xs py-2"
+          label="Coming soon"
+          className="text-xs py-2 cursor-not-allowed opacity-90 pointer-events-none"
         />
       ) : null}
       <Modal
@@ -161,13 +159,6 @@ const GetExclusiveAccessModal = ({
             ))}
           </div>
           <div className="flex flex-col items-center gap-3 mt-6">
-            <button
-              type="button"
-              className="text-primary underline text-sm font-semibold"
-              onClick={() => setMoreOpen(true)}
-            >
-              View plan perks
-            </button>
             <Button
               type="red"
               label={subscribing ? "Redirecting…" : "Get Started"}
@@ -177,11 +168,6 @@ const GetExclusiveAccessModal = ({
           </div>
         </div>
       </Modal>
-      <MembershipMoreInfo
-        open={moreOpen}
-        onClose={() => setMoreOpen(false)}
-        plan={selectedPlan}
-      />
     </div>
   );
 };

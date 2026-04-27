@@ -32,22 +32,34 @@ export default function Orders() {
   return (
     <div>
       <Navbar />
-      <div className="max-w-[1200px] mx-auto py-10">
+      <div className="max-w-[1200px] mx-auto py-10 px-4 sm:px-6">
         <Topbar />
+
+        <header className="mb-8 max-w-2xl">
+          <h1 className="text-2xl sm:text-3xl font-bold text-black">Your orders</h1>
+          <p className="text-[#585858] mt-2 text-base leading-relaxed">
+            Active shipments and payments appear under Active. Delivered or closed orders are under Past. All lists every order on your account.
+          </p>
+        </header>
 
         <OrderTabs
           setActiveTab={setActiveTab}
           activeTab={activeTab}
           activeCount={activeOrders.length}
           completedCount={completedOrders.length}
+          allCount={allOrders.length}
         />
 
         {activeTab === "Active" && (
           <OrderActive orders={activeOrders} isLoading={isLoading} />
         )}
 
-        {activeTab === "Completed" && (
+        {activeTab === "Past" && (
           <OrderCompleted orders={completedOrders} isLoading={isLoading} />
+        )}
+
+        {activeTab === "All" && (
+          <OrderActive orders={allOrders} isLoading={isLoading} />
         )}
 
         <div className="text-sm border-[#DEDEDE] border-t pt-5 text-primary mt-10 space-x-4">

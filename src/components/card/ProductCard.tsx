@@ -158,7 +158,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
           handleCardClick();
         }
       }}
-      className="cursor-pointer border border-transparent lg:hover:border-[#80011D] lg:hover:bg-[#F4EEEE] flex flex-col h-full w-full min-w-0 max-w-full p-2 sm:p-2.5 rounded-3xl transition-all duration-300 ease-in-out"
+      className="cursor-pointer border border-[#80011D] bg-[#F4EEEE] lg:border-transparent lg:bg-transparent lg:hover:border-[#80011D] lg:hover:bg-[#F4EEEE] flex flex-col h-full w-full min-w-0 max-w-full p-2 sm:p-2.5 rounded-3xl transition-all duration-300 ease-in-out"
     >
       <div className="relative w-full aspect-[246/306] shrink-0 mb-3 rounded-2xl overflow-hidden bg-[#f5f5f5]">
         {hasImage ? (

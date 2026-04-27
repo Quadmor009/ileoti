@@ -5,9 +5,10 @@ interface orderTabsProps {
     setActiveTab: Dispatch<SetStateAction<string>>;
     activeCount?: number;
     completedCount?: number;
+    allCount?: number;
 }
 
-const OrderTabs = ({activeTab, setActiveTab, activeCount, completedCount}: orderTabsProps) => {
+const OrderTabs = ({activeTab, setActiveTab, activeCount, completedCount, allCount}: orderTabsProps) => {
 
     
     const headerTabs = [
@@ -44,7 +45,7 @@ const OrderTabs = ({activeTab, setActiveTab, activeCount, completedCount}: order
     label: "Active",
   },
   {
-    key: "Completed",
+    key: "Past",
     img: (active: boolean) => (
       <svg
         width="16"
@@ -65,7 +66,19 @@ const OrderTabs = ({activeTab, setActiveTab, activeCount, completedCount}: order
         />
       </svg>
     ),
-    label: "Completed",
+    label: "Past",
+  },
+  {
+    key: "All",
+    img: (active: boolean) => (
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path
+          d="M2.5 3.5h11v2h-11v-2zm0 4h7v2h-7v-2zm0 4h11v2h-11v-2z"
+          fill={active ? "#4D7A50" : "#707070"}
+        />
+      </svg>
+    ),
+    label: "All",
   },
 ];
   return (
@@ -81,8 +94,12 @@ const OrderTabs = ({activeTab, setActiveTab, activeCount, completedCount}: order
               }`}
             >
             {tab.img(tab.label === activeTab)}  {tab.label}{" "}
-              <span className="h-3.5 w-3.5 rounded-full text-xs bg-[#EDEDED]">
-                {tab.label === "Active" ? (activeCount ?? 0) : (completedCount ?? 0)}
+              <span className="h-3.5 min-w-[1.25rem] px-1 rounded-full text-xs bg-[#EDEDED] tabular-nums inline-flex items-center justify-center">
+                {tab.label === "Active"
+                  ? (activeCount ?? 0)
+                  : tab.label === "Past"
+                    ? (completedCount ?? 0)
+                    : (allCount ?? 0)}
               </span>
             </button>
           ))}
