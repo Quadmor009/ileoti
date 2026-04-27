@@ -9,6 +9,7 @@ import { useQuery } from "@tanstack/react-query";
 import { orderService } from "../../../services/order.service";
 import { useAuthStore } from "../../../store/auth.store";
 import type { Order } from "../../../types";
+import { usePageTitle } from "../../../lib/use-page-title";
 
 const ACTIVE_STATUSES = new Set([
   "SUBMITTED", "CONFIRMED", "AWAITING_PAYMENT", "PAID",
@@ -16,6 +17,7 @@ const ACTIVE_STATUSES = new Set([
 ]);
 
 export default function Orders() {
+  usePageTitle("Your Orders");
   const [activeTab, setActiveTab] = useState("Active");
   const isAuthenticated = useAuthStore((s) => Boolean(s.accessToken));
 

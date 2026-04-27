@@ -9,8 +9,10 @@ import { useState } from "react";
 import { bookEvent } from "../../services/event.service";
 import { getApiErrorMessage } from "../../lib/api-error";
 import { useAuthStore } from "../../store/auth.store";
+import { usePageTitle } from "../../lib/use-page-title";
 
 const BookAnEvent = () => {
+  usePageTitle("Book an Event");
   const { Dragger } = Upload;
   const accessToken = useAuthStore((s) => s.accessToken);
   const [orderService, setOrderService] = useState<"cooperate" | "bulk">(

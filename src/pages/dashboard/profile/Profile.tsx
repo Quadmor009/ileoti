@@ -14,8 +14,10 @@ import type { Address } from "../../../types";
 import { message } from "antd";
 import GetExclusiveAccessModal from "../../../components/get-exclusive-access-modal/GetExclusiveAccessModal";
 import { routes } from "../../../shared/routes/routes";
+import { usePageTitle } from "../../../lib/use-page-title";
 
 const Profile = () => {
+  usePageTitle("Profile");
   const [active, setActive] = useState(false);
   const [editing, setEditing] = useState(false);
   const [membershipModalOpen, setMembershipModalOpen] = useState(false);

@@ -7,8 +7,10 @@ import Navbar from "../../components/navbar/Navbar";
 import { ImagesAndIcons } from "../../shared/images-icons/ImagesAndIcons";
 import { submitContact } from "../../services/contact.service";
 import { getApiErrorMessage } from "../../lib/api-error";
+import { usePageTitle } from "../../lib/use-page-title";
 
 const ContactUs = () => {
+  usePageTitle("Contact Us");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [phone, setPhone] = useState("");

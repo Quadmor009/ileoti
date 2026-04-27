@@ -21,11 +21,6 @@ const DropDown = (props: DeviceGadgetActionProps) => {
       placement="bottom"
       open={open}
       onOpenChange={handleOpenChange}
-      style={{
-        padding: 0,
-        borderRadius: 8,
-        background: "red"
-      }}
     >
       <button className="border border-[#D8D8D8] text-black flex items-center gap-1 bg-transparent cursor-pointer p-4 text-base font-medium rounded-full">
         {props.btnLabel} <img src={props.icons} alt="" />

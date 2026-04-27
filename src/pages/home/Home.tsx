@@ -7,15 +7,15 @@ import { ImagesAndIcons } from "../../shared/images-icons/ImagesAndIcons";
 import Button from "../../components/btns/Button";
 import {
   InstagramOutlined,
-  TikTokOutlined,
-  WhatsAppOutlined,
+  MailOutlined,
   XOutlined,
 } from "@ant-design/icons";
 import GetExclusiveAccessModal from "../../components/get-exclusive-access-modal/GetExclusiveAccessModal";
 import { useQuery } from "@tanstack/react-query";
 import { productService } from "../../services/product.service";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { routes } from "../../shared/routes/routes";
+import { usePageTitle } from "../../lib/use-page-title";
 
 const CATEGORY_FALLBACKS = [
   ImagesAndIcons.organicSpiritImage,
@@ -28,6 +28,7 @@ const CATEGORY_FALLBACKS = [
 ];
 
 const Home = () => {
+  usePageTitle();
   const navigate = useNavigate();
 
   const {
@@ -225,18 +226,25 @@ const Home = () => {
         </div>
       </div>
       <div className="flex gap-4 items-center justify-center py-7">
-        <div className="bg-black h-16 w-16 rounded-full flex items-center justify-center cursor-pointer">
+        <a
+          href="https://www.instagram.com/ileoti.ng?igsh=ZnFqNDkxYmV0NjJl"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex h-16 w-16 cursor-pointer items-center justify-center rounded-full bg-black transition-colors hover:bg-neutral-900"
+          aria-label="Ile Oti on Instagram"
+        >
           <InstagramOutlined style={{ color: "white", fontSize: 28 }} />
+        </a>
+        <div className="flex h-16 w-16 cursor-default items-center justify-center rounded-full bg-black">
+          <XOutlined style={{ color: "white", fontSize: 28 }} aria-hidden />
         </div>
-        <div className="bg-black h-16 w-16 rounded-full flex items-center justify-center cursor-pointer">
-          <XOutlined style={{ color: "white", fontSize: 28 }} />
-        </div>
-        <div className="bg-black h-16 w-16 rounded-full flex items-center justify-center cursor-pointer">
-          <TikTokOutlined style={{ color: "white", fontSize: 28 }} />
-        </div>
-        <div className="bg-black h-16 w-16 rounded-full flex items-center justify-center cursor-pointer">
-          <WhatsAppOutlined style={{ color: "white", fontSize: 28 }} />
-        </div>
+        <Link
+          to={routes.contact}
+          className="flex h-16 w-16 cursor-pointer items-center justify-center rounded-full bg-black transition-colors hover:bg-neutral-900"
+          aria-label="Contact us"
+        >
+          <MailOutlined style={{ color: "white", fontSize: 28 }} />
+        </Link>
       </div>
       <Footer />
     </section>

@@ -3,48 +3,24 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { routes } from "../../shared/routes/routes";
 
-const faqs = [
-  {
-    q: "Do I need to be 18 to order?",
-    a: "Yes. You must be 18 years or older to purchase alcohol from Ile-Oti. By placing an order you confirm you meet the legal drinking age in your jurisdiction.",
-  },
-  {
-    q: "How long does delivery take?",
-    a: "Standard delivery takes 2–4 business days. Express same-day delivery is available in select cities for orders placed before 10 AM.",
-  },
-  {
-    q: "What is your returns policy?",
-    a: "We accept returns for damaged or incorrect items within 48 hours of delivery. Contact our support team with your order number and photos of the item.",
-  },
-  {
-    q: "Do you offer gift packaging?",
-    a: "Yes! You can add premium gift wrapping and a personal message at checkout using our Gift Box feature.",
-  },
-  {
-    q: "Can I track my order?",
-    a: "Yes. Once your order ships you will receive a tracking link via email. You can also view your order status any time from your account dashboard.",
-  },
-];
-
 const Footer = () => {
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
-  const [newsletterEmail, setNewsletterEmail] = useState("");
-  const [newsletterDone, setNewsletterDone] = useState(false);
+
+  const faqs = [
+    "What is Ile-Oti?",
+    "What is Ile-Oti?",
+    "What is Ile-Oti?",
+    "What is Ile-Oti?",
+    "What is Ile-Oti?",
+  ];
 
   const toggleFaq = (index: number) => {
     setActiveIndex(activeIndex === index ? null : index);
   };
 
-  const handleNewsletter = () => {
-    const trimmed = newsletterEmail.trim();
-    if (!trimmed || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed)) return;
-    // TODO: wire to backend newsletter endpoint
-    setNewsletterDone(true);
-  };
-
   return (
     <div
-      className="w-full flex lato justify-center py-10"
+      className="w-full flex  lato  justify-center py-10"
       style={{
         backgroundImage: `url(${ImagesAndIcons.FooterImage})`,
         backgroundSize: "cover",
@@ -60,19 +36,20 @@ const Footer = () => {
           </h2>
 
           <div className="space-y-4">
-            {faqs.map((faq, i) => (
-              <div key={faq.q}>
+            {faqs.map((q, i) => (
+              <div key={i}>
                 <button
                   type="button"
                   onClick={() => toggleFaq(i)}
                   className="flex justify-between items-center text-base font-medium w-full cursor-pointer text-left border-b border-gray-600 pb-2"
                 >
-                  <span>{faq.q}</span>
+                  <span>{q}</span>
                   <span>{activeIndex === i ? "−" : "+"}</span>
                 </button>
                 {activeIndex === i && (
-                  <p className="text-gray-400 text-sm mt-2 leading-relaxed">
-                    {faq.a}
+                  <p className="text-gray-400 text-base mt-2">
+                    Ile-Oti is a brand dedicated to offering premium beverages
+                    and cultural experiences.
                   </p>
                 )}
               </div>
@@ -117,11 +94,9 @@ const Footer = () => {
             </li>
           </ul>
         </div>
-
-        {/* Right: newsletter */}
         <div className="w-full lg:max-w-60">
           <p className="text-xs text-gray-400 mb-6">
-            © 2025 All rights reserved by Ile-Oti
+            © 2026 Ile Oti. All rights reserved.
           </p>
           <div>
             <p className="font-medium mb-2">Follow Our News</p>
@@ -130,29 +105,19 @@ const Footer = () => {
               and more!
             </p>
 
-            {newsletterDone ? (
-              <p className="text-sm text-green-400 font-medium py-2">
-                You're subscribed! 🎉
-              </p>
-            ) : (
-              <div className="flex flex-col gap-2">
-                <input
-                  type="email"
-                  placeholder="Enter Email Address"
-                  value={newsletterEmail}
-                  onChange={(e) => setNewsletterEmail(e.target.value)}
-                  className="border border-b-[#D9D9D9] py-1 bg-transparent border-t-0 border-x-0 text-white placeholder:text-gray-500 outline-none"
-                />
-                <button
-                  type="button"
-                  onClick={handleNewsletter}
-                  disabled={!newsletterEmail.trim()}
-                  className="bg-white cursor-pointer w-full py-3 font-medium mt-2 text-base rounded-md text-black disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  Submit
-                </button>
-              </div>
-            )}
+            <div className="flex flex-col gap-2">
+              <input
+                type="text"
+                placeholder="Enter Email Address"
+                className="border border-b-[#D9D9D9] py-1 bg-none border-t-0 border-x-0"
+              />
+              <button
+                type="button"
+                className="bg-white cursor-pointer w-full py-3 font-medium mt-2 text-base rounded-md text-black"
+              >
+                Submit
+              </button>
+            </div>
           </div>
         </div>
       </div>

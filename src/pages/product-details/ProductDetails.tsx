@@ -22,6 +22,7 @@ import GiftBoxModal from "../../components/gift-box-modal/GiftboxModal";
 import PersonalMessageModal from "../../components/gift-box-modal/PersonalMessageModal";
 import { useLoginModalStore } from "../../store/login-modal.store";
 import { routes } from "../../shared/routes/routes";
+import { usePageTitle } from "../../lib/use-page-title";
 
 export default function ProductDetailsPage() {
   const navigate = useNavigate();
@@ -41,6 +42,8 @@ export default function ProductDetailsPage() {
   const removeGuestItem = useCartStore((s) => s.removeGuestItem);
   const requestLogin = useLoginModalStore((s) => s.requestLogin);
   const qc = useQueryClient();
+
+  usePageTitle(product?.name);
 
   useEffect(() => {
     setQuantity(1);

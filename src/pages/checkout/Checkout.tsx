@@ -15,6 +15,7 @@ import { orderService } from "../../services/order.service";
 import { effectivePrice, formatNGN, primaryImage } from "../../lib/format";
 import { message } from "antd";
 import type { Address, CartItem } from "../../types";
+import { usePageTitle } from "../../lib/use-page-title";
 
 type CheckoutStep = "delivery" | "payment";
 
@@ -105,6 +106,7 @@ function SummaryRows({
 }
 
 const Checkout = () => {
+  usePageTitle("Checkout");
   const isAuthenticated = useAuthStore((s) => Boolean(s.accessToken));
   const navigate = useNavigate();
   const queryClient = useQueryClient();
