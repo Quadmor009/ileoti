@@ -22,6 +22,9 @@ const Cart = () => {
   const navigate = useNavigate();
   const qc = useQueryClient();
   const setCart = useCartStore((s) => s.setCart);
+  const guestItems = useCartStore((s) => s.guestItems);
+  const removeGuestItem = useCartStore((s) => s.removeGuestItem);
+  const updateGuestItem = useCartStore((s) => s.updateGuestItem);
   const [discountCode, setDiscountCode] = useState("");
   const [discountResult, setDiscountResult] = useState<{
     code: string;
@@ -29,12 +32,6 @@ const Cart = () => {
     value: number;
   } | null>(null);
   const [discountError, setDiscountError] = useState("");
-
-  useEffect(() => {
-    if (!isAuthenticated) {
-      navigate(routes.home);
-    }
-  }, [isAuthenticated, navigate]);
 
   const { data: cart, isLoading, isError } = useQuery({
     queryKey: ["cart"],
@@ -71,11 +68,38 @@ const Cart = () => {
     onError: () => void message.error("Could not remove item"),
   });
 
-  const cartItems = cart?.items ?? [];
-  const subtotal = Number((cart as { subtotal?: number } | undefined)?.subtotal ?? 0);
+  const normalizedGuestItems = guestItems.map((item) => ({
+    id: `guest-${item.productId}`,
+    cartId: "guest-cart",
+    productId: item.productId,
+    quantity: item.quantity,
+    createdAt: new Date(0).toISOString(),
+    updatedAt: new Date(0).toISOString(),
+    product: {
+      id: item.productId,
+      name: item.name,
+      slug: item.name.toLowerCase().replace(/\s+/g, "-"),
+      price: item.price,
+      discountedPrice: null,
+      discountStart: null,
+      discountEnd: null,
+      stockStatus: "IN_STOCK" as const,
+      stockQuantity: 999,
+      allowBackorders: true,
+      images: item.image
+        ? [{ id: `guest-image-${item.productId}`, url: item.image, isPrimary: true, sortOrder: 0 }]
+        : [],
+    },
+  }));
+  const cartItems = isAuthenticated ? cart?.items ?? [] : normalizedGuestItems;
+  const subtotal = isAuthenticated
+    ? Number((cart as { subtotal?: number } | undefined)?.subtotal ?? 0)
+    : guestItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
   const shipping = 0;
   const tax = 0;
-  const apiTotal = Number((cart as { total?: number } | undefined)?.total ?? subtotal);
+  const apiTotal = isAuthenticated
+    ? Number((cart as { total?: number } | undefined)?.total ?? subtotal)
+    : subtotal;
 
   const validateDiscountMutation = useMutation({
     mutationFn: () => discountService.validateCode(discountCode, subtotal),
@@ -110,24 +134,32 @@ const Cart = () => {
         <div className="w-full lg:w-180 flex-col flex gap-6">
           <h4 className="text-3xl font-bold">Cart</h4>
 
-          {isLoading && (
+          {isAuthenticated && isLoading && (
             <div className="flex flex-col gap-6">
               {[1, 2, 3].map((i) => (
                 <div key={i} className="h-40 rounded-3xl bg-[#F4EEEE] animate-pulse" />
               ))}
             </div>
           )}
-          {isError && <p className="text-red-600">Failed to load cart</p>}
-          {!isLoading && !isError && cartItems.length === 0 && (
+          {isAuthenticated && isError && <p className="text-red-600">Failed to load cart</p>}
+          {(!isAuthenticated || (!isLoading && !isError)) && cartItems.length === 0 && (
             <p className="text-[#585858]">Your cart is empty.</p>
           )}
           {cartItems.map((item) => (
             <div key={item.id}>
               <ProductCardCart
                 item={item}
-                onRemove={(productId) => removeMutation.mutate(productId)}
+                onRemove={(productId) => {
+                  if (isAuthenticated) {
+                    removeMutation.mutate(productId);
+                  } else {
+                    removeGuestItem(productId);
+                  }
+                }}
                 onUpdateQuantity={(productId, quantity) =>
-                  updateMutation.mutate({ productId, quantity })
+                  isAuthenticated
+                    ? updateMutation.mutate({ productId, quantity })
+                    : updateGuestItem(productId, quantity)
                 }
               />
               <div className="w-full border mt-6 border-[#D8D8D8]" />

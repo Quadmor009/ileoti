@@ -42,7 +42,7 @@ const Button = ({
     }
   };
   return (
-    <button onClick={handleClick} className={`${getClass(type)} ${className}`}>
+    <button type="button" onClick={handleClick} className={`${getClass(type)} ${className}`}>
       {label} <img src={icon} alt="" />
     </button>
   );

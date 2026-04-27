@@ -16,6 +16,7 @@ import GetExclusiveAccessModal from "../../components/get-exclusive-access-modal
 import { useQuery } from "@tanstack/react-query";
 import { productService } from "../../services/product.service";
 import { useNavigate } from "react-router-dom";
+import { routes } from "../../shared/routes/routes";
 
 const CATEGORY_FALLBACKS = [
   ImagesAndIcons.organicSpiritImage,
@@ -84,14 +85,15 @@ const Home = () => {
             <ProductCard key={product.id} product={product} />
           ))}
         </div>
-        <div className="flex items-start ml-21 gap-4 overflow-x-hidden">
-          <div className="w-62">
+        <div className="relative ml-21">
+          <div className="w-62 relative z-10 pointer-events-none">
             <p className="text-xl text-black font-semibold">Categories</p>
             <h4 className="text-[40px] font-bold text-primary">
               SHOP YOUR FAVOURITE CATEGORIES HERE...
             </h4>
           </div>
-          <div className="flex gap-4">
+          <div className="-mt-88 pl-20 lg:pl-58 overflow-x-auto no-scrollbar relative z-0">
+            <div className="flex gap-4 w-max">
             {categoryCards.map((card) => (
               <div
                 key={card.id}
@@ -108,6 +110,7 @@ const Home = () => {
                 </div>
               </div>
             ))}
+            </div>
           </div>
         </div>
         <div
@@ -148,6 +151,7 @@ const Home = () => {
               }}
               onMouseEnter={() => setHovered("corperateevents")}
               onMouseLeave={() => setHovered("")}
+              onClick={() => navigate(routes.contact)}
               className="w-[80%] h-[80%] rounded-md cursor-pointer lg:w-101 lg:h-94 flex flex-col items-center justify-center"
             >
               <h2 className="font-bold text-xs lg:text-4xl text-center mb-6 text-white">
@@ -174,6 +178,7 @@ const Home = () => {
                 backgroundRepeat: "no-repeat",
                 backgroundPosition: "center",
               }}
+              onClick={() => navigate(routes.contact)}
               className="w-[80%] h-[80%] cursor-pointer rounded-md lg:w-101 lg:h-94 flex items-center flex-col justify-center"
             >
               <h2 className="font-bold text-xs lg:text-4xl lg:w-75 mx-auto text-center mb-6 text-white">
@@ -191,17 +196,17 @@ const Home = () => {
         </div>
       </div>
       <div className="flex gap-2 items-center justify-center py-7">
-        <div className="bg-black h-8 w-8 rounded-full flex items-center justify-center cursor-pointer">
-          <InstagramOutlined style={{ color: "white" }} />
+        <div className="bg-black h-16 w-16 rounded-full flex items-center justify-center cursor-pointer">
+          <InstagramOutlined style={{ color: "white", fontSize: 28 }} />
         </div>
-        <div className="bg-black h-8 w-8 rounded-full flex items-center justify-center cursor-pointer">
-          <XOutlined style={{ color: "white" }} />
+        <div className="bg-black h-16 w-16 rounded-full flex items-center justify-center cursor-pointer">
+          <XOutlined style={{ color: "white", fontSize: 28 }} />
         </div>
-        <div className="bg-black h-8 w-8 rounded-full flex items-center justify-center cursor-pointer">
-          <TikTokOutlined style={{ color: "white" }} />
+        <div className="bg-black h-16 w-16 rounded-full flex items-center justify-center cursor-pointer">
+          <TikTokOutlined style={{ color: "white", fontSize: 28 }} />
         </div>
-        <div className="bg-black h-8 w-8 rounded-full flex items-center justify-center cursor-pointer">
-          <WhatsAppOutlined style={{ color: "white" }} />
+        <div className="bg-black h-16 w-16 rounded-full flex items-center justify-center cursor-pointer">
+          <WhatsAppOutlined style={{ color: "white", fontSize: 28 }} />
         </div>
       </div>
       <Footer />

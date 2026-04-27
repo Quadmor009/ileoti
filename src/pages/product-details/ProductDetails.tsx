@@ -241,7 +241,7 @@ export default function ProductDetailsPage() {
               <h2 className="text-[40px] leading-12 font-bold max-w-107 text-gray-900">
                 {product.name}
               </h2>
-              <button onClick={handleToggleWishlist}>
+              <button type="button" onClick={handleToggleWishlist}>
                 <Lovelyred
                   width="56"
                   height="56"

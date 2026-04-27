@@ -56,6 +56,9 @@ const ProductCard = ({ product }: ProductCardProps) => {
   }, [product.reviews]);
 
   const handleCardClick = () => {
+    if (giftBoxOpen || personalMessageOpen) {
+      return;
+    }
     navigate(`${routes.products}/${id}`);
   };
 
@@ -170,7 +173,11 @@ const ProductCard = ({ product }: ProductCardProps) => {
             className="w-full h-full"
           >
             <div className="p-2 flex items-center justify-end">
-              <button onClick={handleWishlistClick}>
+              <button
+                type="button"
+                onClick={handleWishlistClick}
+                className="relative z-20 cursor-pointer"
+              >
                 <img
                   src={ImagesAndIcons.lovelyRed}
                   alt=""
@@ -186,7 +193,11 @@ const ProductCard = ({ product }: ProductCardProps) => {
         )}
         {!hasImage && (
           <div className="absolute top-2 right-2">
-            <button onClick={handleWishlistClick}>
+            <button
+              type="button"
+              onClick={handleWishlistClick}
+              className="relative z-20 cursor-pointer"
+            >
               <img
                 src={ImagesAndIcons.lovelyRed}
                 alt=""
@@ -241,6 +252,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
           </div>
         )}
         <button
+          type="button"
           onClick={handleGiftBoxClick}
           className="shrink-0 lg:h-12 h-8 w-8 lg:w-12 rounded-full flex justify-center items-center border border-[#80011D]"
         >
