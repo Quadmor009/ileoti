@@ -19,36 +19,55 @@ import type { Address, CartItem } from "../../types";
 type CheckoutStep = "delivery" | "payment";
 
 const mutedRowClass = "text-[#585858] text-base lg:text-xl font-normal";
+const shippingTaxAmountClass = "text-lg sm:text-2xl font-normal text-[#585858] tabular-nums";
 
 function OrderLines({ items }: { items: CartItem[] }) {
   if (!items.length) {
     return <p className="text-[#585858] text-base py-4">Your cart is empty.</p>;
   }
   return (
-    <>
+    <ul className="space-y-0 divide-y divide-[#EFEFEF]">
       {items.map((item) => {
         const unit = effectivePrice(item.product);
         const line = unit * item.quantity;
+        const cat = (item.product as { category?: { name?: string } }).category?.name ?? "—";
         return (
-          <div key={item.id} className="flex gap-4 items-start border-b border-[#F0F0F0] last:border-0 pb-4 mb-4 last:mb-0 last:pb-0">
+          <li key={item.id} className="flex gap-4 sm:gap-5 py-5 first:pt-0">
             <img
-              className="w-24 h-28 sm:w-34 sm:h-40 rounded-2xl object-cover shrink-0"
+              className="w-[5.5rem] h-[6.5rem] sm:w-32 sm:h-40 rounded-2xl object-cover shrink-0 ring-1 ring-black/5"
               src={primaryImage(item.product.images, ImagesAndIcons.softDrinkBottle)}
               alt={item.product.name}
             />
-            <div className="min-w-0 flex-1">
-              <p className="text-base lg:text-xl font-bold text-black">{item.product.name}</p>
-              <p className={`${mutedRowClass} mt-1`}>
-                Category: {(item.product as { category?: { name?: string } }).category?.name ?? "—"}
-              </p>
-              <p className="text-base lg:text-xl font-bold text-black mt-2">{formatNGN(unit)}</p>
-              <p className={`${mutedRowClass} mt-1`}>Quantity: {item.quantity}</p>
-              <p className="text-sm font-semibold text-black mt-2 tabular-nums">Line: {formatNGN(line)}</p>
+            <div className="min-w-0 flex-1 flex flex-col justify-between gap-3">
+              <div>
+                <p className="text-lg sm:text-xl font-bold text-black leading-snug">{item.product.name}</p>
+                <p className="text-sm text-[#585858] mt-1.5 leading-relaxed">
+                  <span className="font-medium text-[#585858]">Category</span>
+                  <span className="text-[#C4C4C4] mx-1.5" aria-hidden>
+                    ·
+                  </span>
+                  <span>{cat}</span>
+                  <span className="text-[#C4C4C4] mx-1.5" aria-hidden>
+                    ·
+                  </span>
+                  <span className="font-medium text-[#585858]">Qty</span> {item.quantity}
+                </p>
+              </div>
+              <div className="flex flex-wrap items-end justify-between gap-3 pt-1 border-t border-[#F4F4F4] sm:border-0 sm:pt-0">
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-wide text-[#9B9B9B]">Unit price</p>
+                  <p className="text-sm sm:text-base text-[#585858] tabular-nums mt-0.5">{formatNGN(unit)}</p>
+                </div>
+                <div className="text-right">
+                  <p className="text-xs font-semibold uppercase tracking-wide text-[#9B9B9B]">Line total</p>
+                  <p className="text-lg sm:text-xl font-semibold text-black tabular-nums mt-0.5">{formatNGN(line)}</p>
+                </div>
+              </div>
             </div>
-          </div>
+          </li>
         );
       })}
-    </>
+    </ul>
   );
 }
 
@@ -69,13 +88,13 @@ function SummaryRows({
         <p className="text-base lg:text-xl font-bold text-black">Subtotal</p>
         <p className="text-2xl font-normal text-black tabular-nums">{formatNGN(subtotal)}</p>
       </div>
-      <div className="flex justify-between gap-4">
+      <div className="flex justify-between items-baseline gap-4">
         <p className={mutedRowClass}>Estimated Shipping</p>
-        <p className={`${mutedRowClass} text-2xl tabular-nums`}>{formatNGN(shipping)}</p>
+        <p className={shippingTaxAmountClass}>{formatNGN(shipping)}</p>
       </div>
-      <div className="flex justify-between gap-4">
+      <div className="flex justify-between items-baseline gap-4">
         <p className={mutedRowClass}>Estimated Tax</p>
-        <p className={`${mutedRowClass} text-2xl tabular-nums`}>{formatNGN(tax)}</p>
+        <p className={shippingTaxAmountClass}>{formatNGN(tax)}</p>
       </div>
       <div className="flex justify-between border-y-2 border-[#F0F0F0] py-4 mt-2 gap-4">
         <p className="text-base lg:text-xl font-bold text-black">Total</p>
@@ -354,25 +373,25 @@ const Checkout = () => {
             {step === "delivery" ? (
               <>
                 <div>
-                  <h2 className="text-2xl sm:text-3xl font-bold text-black">Your order</h2>
-                  <div className="mt-6">
+                  <h2 className="text-2xl sm:text-3xl font-bold text-black tracking-tight">Your order</h2>
+                  <div className="mt-5 rounded-2xl border border-[#EDEDED] bg-[#FAFAFA] px-4 py-3 sm:px-5 sm:py-4">
                     <OrderLines items={cartItems} />
                   </div>
                 </div>
                 <div>
-                  <h2 className="text-2xl sm:text-3xl font-bold text-black">Summary</h2>
+                  <h2 className="text-2xl sm:text-3xl font-bold text-black tracking-tight">Summary</h2>
                   <SummaryRows subtotal={subtotal} shipping={shipping} tax={tax} total={total} />
                 </div>
               </>
             ) : (
               <>
                 <div>
-                  <h2 className="text-2xl sm:text-3xl font-bold text-black">Summary</h2>
+                  <h2 className="text-2xl sm:text-3xl font-bold text-black tracking-tight">Summary</h2>
                   <SummaryRows subtotal={subtotal} shipping={shipping} tax={tax} total={total} />
                 </div>
                 <div>
-                  <h2 className="text-2xl sm:text-3xl font-bold text-black">Your order</h2>
-                  <div className="mt-6">
+                  <h2 className="text-2xl sm:text-3xl font-bold text-black tracking-tight">Your order</h2>
+                  <div className="mt-5 rounded-2xl border border-[#EDEDED] bg-[#FAFAFA] px-4 py-3 sm:px-5 sm:py-4">
                     <OrderLines items={cartItems} />
                   </div>
                 </div>

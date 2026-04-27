@@ -146,13 +146,13 @@ const CartDropDown = () => {
     >
       <button
         type="button"
-        className="relative border border-transparent hover:border-[#80011D] transition-all duration-300 p-0.5 rounded-full"
+        className="relative flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[#80011D] text-white shadow-sm transition-colors hover:bg-[#6B011A] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
         aria-label="Open cart"
       >
-        <img className="ml-[0.5px]" src={ImagesAndIcons.cartRed} alt="" />
+        <img src={ImagesAndIcons.shoppingCartWhite} alt="" className="h-6 w-6 object-contain" />
         {itemCount > 0 && (
-          <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full bg-[#8B0000] text-white text-[10px] font-bold leading-[18px] text-center">
-            {itemCount}
+          <span className="absolute -top-0.5 -right-0.5 min-w-[1.125rem] h-[1.125rem] px-0.5 rounded-full bg-white text-[#80011D] text-[10px] font-bold leading-[1.125rem] text-center ring-1 ring-[#80011D]/30">
+            {itemCount > 99 ? "99+" : itemCount}
           </span>
         )}
       </button>

@@ -183,13 +183,13 @@ const Cart = () => {
                 <p className="text-2xl font-normal text-primary">-{formatNGN(discountAmount)}</p>
               </div>
             )}
-            <div className="flex justify-between gap-4">
+            <div className="flex justify-between items-baseline gap-4">
               <p className="text-base lg:text-xl font-normal text-[#585858]">Estimated Shipping</p>
-              <p className="text-2xl font-normal text-[#585858] tabular-nums">{formatNGN(shipping)}</p>
+              <p className="text-lg sm:text-2xl font-normal text-[#585858] tabular-nums">{formatNGN(shipping)}</p>
             </div>
-            <div className="flex justify-between gap-4">
+            <div className="flex justify-between items-baseline gap-4">
               <p className="text-base lg:text-xl font-normal text-[#585858]">Estimated Tax</p>
-              <p className="text-2xl font-normal text-[#585858] tabular-nums">{formatNGN(tax)}</p>
+              <p className="text-lg sm:text-2xl font-normal text-[#585858] tabular-nums">{formatNGN(tax)}</p>
             </div>
           </div>
           <div className="flex justify-between border-y-2 mb-6 mt-4 border-[#F0F0F0] py-4 gap-4">

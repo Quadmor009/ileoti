@@ -220,15 +220,30 @@ const Navbar = () => {
           <Dropdown dropdownRender={() => dropdownContent} trigger={["click"]}>
             <button
               type="button"
-              className="flex items-center justify-center text-xl text-black"
+              className="relative flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[#80011D] text-white shadow-sm transition-colors hover:bg-[#6B011A] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
               aria-label="Notifications"
             >
-              <Badge count={unread} size="small" offset={[2, 0]} overflowCount={99}>
-                <BellOutlined />
+              <Badge
+                count={unread}
+                size="small"
+                offset={[6, -4]}
+                overflowCount={99}
+                styles={{
+                  indicator: {
+                    background: "#FFFFFF",
+                    color: "#80011D",
+                    fontWeight: 700,
+                    boxShadow: "0 0 0 1px rgba(128,1,29,0.2)",
+                  },
+                }}
+              >
+                <span className="inline-flex h-8 w-8 items-center justify-center">
+                  <BellOutlined className="text-[1.35rem] text-white" />
+                </span>
               </Badge>
             </button>
           </Dropdown>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
             <FavouritesDropDown />
             <CartDropDown />
           </div>
