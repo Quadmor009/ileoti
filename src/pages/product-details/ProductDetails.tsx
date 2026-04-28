@@ -353,90 +353,111 @@ export default function ProductDetailsPage() {
               Product Category: {product.category?.name ?? "—"}
             </p>
 
-            {/* Quantity + cart actions */}
-            {lineQty === 0 ? (
-              <>
-                <div className="mt-9 flex items-center justify-between">
-                  <p className="font-normal text-2xl text-[#585858]">Quantity</p>
-                  <div className="bg-[#F4EEEE] rounded-[55px] px-4 py-2 flex gap-2 font-semibold text-2xl w-40">
-                    <button type="button" onClick={() => setQuantity((q) => Math.max(1, q - 1))}>
-                      -
-                    </button>
-                    <span>{quantity}</span>
-                    <button type="button" onClick={() => setQuantity((q) => q + 1)}>
-                      +
-                    </button>
-                  </div>
-                </div>
+            {/* Quantity + cart actions — same card + CTA stack for every PDP (in or out of cart) */}
+            <div className="mt-9 space-y-6">
+              <div className="rounded-2xl border border-[#ECECEC] bg-[#FAFAFA] px-4 py-5 sm:px-6 sm:py-6">
+                {lineQty > 0 ? (
+                  <>
+                    <p className="text-sm font-semibold uppercase tracking-wide text-[#80011D] mb-1">
+                      In your cart
+                    </p>
+                    <p className="text-base text-[#585858] mb-4">
+                      Adjust quantity or continue to checkout.
+                    </p>
+                    <div
+                      className="max-w-md w-full min-h-[52px] sm:min-h-14 rounded-[56px] border border-[#80011D] bg-white flex items-center justify-center gap-8 sm:gap-12 shadow-sm"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <button
+                        type="button"
+                        className="text-2xl font-medium w-12 h-12 rounded-full hover:bg-[#FFF5F5] disabled:opacity-40 transition-colors"
+                        onClick={() => bumpCart(-1)}
+                        disabled={updateLineMutation.isPending || removeLineMutation.isPending}
+                        aria-label="Decrease quantity"
+                      >
+                        −
+                      </button>
+                      <span className="text-xl font-semibold min-w-[2.5rem] text-center tabular-nums">
+                        {lineQty}
+                      </span>
+                      <button
+                        type="button"
+                        className="text-2xl font-medium w-12 h-12 rounded-full hover:bg-[#FFF5F5] disabled:opacity-40 transition-colors"
+                        onClick={() => bumpCart(1)}
+                        disabled={updateLineMutation.isPending || removeLineMutation.isPending}
+                        aria-label="Increase quantity"
+                      >
+                        +
+                      </button>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <p className="text-sm font-semibold uppercase tracking-wide text-[#80011D] mb-1">
+                      Quantity
+                    </p>
+                    <p className="text-base text-[#585858] mb-4">
+                      Choose how many you&apos;d like, then add to cart or buy now.
+                    </p>
+                    <div
+                      className="max-w-md w-full min-h-[52px] sm:min-h-14 rounded-[56px] border border-[#80011D] bg-white flex items-center justify-center gap-8 sm:gap-12 shadow-sm"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <button
+                        type="button"
+                        className="text-2xl font-medium w-12 h-12 rounded-full hover:bg-[#FFF5F5] transition-colors"
+                        onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+                        aria-label="Decrease quantity"
+                      >
+                        −
+                      </button>
+                      <span className="text-xl font-semibold min-w-[2.5rem] text-center tabular-nums">
+                        {quantity}
+                      </span>
+                      <button
+                        type="button"
+                        className="text-2xl font-medium w-12 h-12 rounded-full hover:bg-[#FFF5F5] transition-colors"
+                        onClick={() => setQuantity((q) => q + 1)}
+                        aria-label="Increase quantity"
+                      >
+                        +
+                      </button>
+                    </div>
+                  </>
+                )}
+              </div>
+              <div className="flex flex-col gap-3">
                 <Button
                   type="red"
-                  label="Buy Now"
-                  className="py-6 mt-9 text-base rounded-[55px]"
+                  label="Buy now"
+                  className="py-6 text-base rounded-[55px]"
                   handleClick={handleBuyNow}
                 />
-                <div className="mt-4 flex gap-4">
-                  <Button
-                    type="outlineRed"
-                    className="py-6"
-                    label={addToCartMutation.isPending ? "Adding…" : "Add To Cart"}
-                    handleClick={handleAddToCart}
-                  />
-                  <Button
-                    type="outlineRed"
-                    className="py-6"
-                    label="Create Gift Box"
-                    handleClick={() => setGiftBoxOpen(true)}
-                  />
-                </div>
-              </>
-            ) : (
-              <div className="mt-9 space-y-6">
-                <div className="rounded-2xl border border-[#ECECEC] bg-[#FAFAFA] px-4 py-5 sm:px-6 sm:py-6">
-                  <p className="text-sm font-semibold uppercase tracking-wide text-[#80011D] mb-1">
-                    In your cart
-                  </p>
-                  <p className="text-base text-[#585858] mb-4">Adjust quantity or continue to checkout.</p>
-                  <div
-                    className="max-w-md w-full min-h-[52px] sm:min-h-14 rounded-[56px] border border-[#80011D] bg-white flex items-center justify-center gap-8 sm:gap-12 shadow-sm"
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    <button
-                      type="button"
-                      className="text-2xl font-medium w-12 h-12 rounded-full hover:bg-[#FFF5F5] disabled:opacity-40 transition-colors"
-                      onClick={() => bumpCart(-1)}
-                      disabled={updateLineMutation.isPending || removeLineMutation.isPending}
-                      aria-label="Decrease quantity"
-                    >
-                      −
-                    </button>
-                    <span className="text-xl font-semibold min-w-[2.5rem] text-center tabular-nums">{lineQty}</span>
-                    <button
-                      type="button"
-                      className="text-2xl font-medium w-12 h-12 rounded-full hover:bg-[#FFF5F5] disabled:opacity-40 transition-colors"
-                      onClick={() => bumpCart(1)}
-                      disabled={updateLineMutation.isPending || removeLineMutation.isPending}
-                      aria-label="Increase quantity"
-                    >
-                      +
-                    </button>
+                {lineQty === 0 ? (
+                  <div className="flex flex-col gap-3 sm:flex-row sm:gap-4">
+                    <Button
+                      type="outlineRed"
+                      className="py-6 flex-1"
+                      label={addToCartMutation.isPending ? "Adding…" : "Add to cart"}
+                      handleClick={handleAddToCart}
+                    />
+                    <Button
+                      type="outlineRed"
+                      className="py-6 flex-1"
+                      label="Create gift box"
+                      handleClick={() => setGiftBoxOpen(true)}
+                    />
                   </div>
-                </div>
-                <div className="flex flex-col gap-3">
-                  <Button
-                    type="red"
-                    label="Buy now"
-                    className="py-6 text-base rounded-[55px]"
-                    handleClick={handleBuyNow}
-                  />
+                ) : (
                   <Button
                     type="outlineRed"
                     className="py-6"
                     label="Create gift box"
                     handleClick={() => setGiftBoxOpen(true)}
                   />
-                </div>
+                )}
               </div>
-            )}
+            </div>
 
             {/* Mobile: You May Also Like */}
             <div className="flex-col lg:hidden">
