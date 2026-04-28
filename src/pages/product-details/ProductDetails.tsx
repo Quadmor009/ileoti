@@ -43,8 +43,6 @@ export default function ProductDetailsPage() {
   const requestLogin = useLoginModalStore((s) => s.requestLogin);
   const qc = useQueryClient();
 
-  usePageTitle(product?.name);
-
   useEffect(() => {
     setQuantity(1);
   }, [id]);
@@ -54,6 +52,8 @@ export default function ProductDetailsPage() {
     queryFn: () => productService.getProduct(id!),
     enabled: !!id,
   });
+
+  usePageTitle(product?.name);
 
   const { data: reviewsData } = useQuery({
     queryKey: ["reviews", id],
