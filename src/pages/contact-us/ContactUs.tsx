@@ -7,10 +7,8 @@ import Navbar from "../../components/navbar/Navbar";
 import { ImagesAndIcons } from "../../shared/images-icons/ImagesAndIcons";
 import { submitContact } from "../../services/contact.service";
 import { getApiErrorMessage } from "../../lib/api-error";
-import { usePageTitle } from "../../lib/use-page-title";
 
 const ContactUs = () => {
-  usePageTitle("Contact Us");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [phone, setPhone] = useState("");
@@ -21,13 +19,8 @@ const ContactUs = () => {
 
   const handleSend = async () => {
     const name = `${firstName} ${lastName}`.trim();
-    const emailTrimmed = email.trim();
-    if (!name || !emailTrimmed || !description.trim()) {
+    if (!name || !email.trim() || !description.trim()) {
       void message.error("Please fill in name, email, and description.");
-      return;
-    }
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailTrimmed)) {
-      void message.error("Please enter a valid email address.");
       return;
     }
     setLoading(true);
@@ -55,8 +48,8 @@ const ContactUs = () => {
       <Navbar />
       <div className="max-w-300 mx-auto w-[90%] py-11">
         <h3 className="text-3xl text-black font-bold mb-6">Contact Us</h3>
-        <div className="flex flex-col lg:flex-row gap-11">
-          <div className="w-full lg:w-1/2">
+        <div className="flex gap-11">
+          <div className="w-1/2">
             <div className="flex items-center gap-4 w-full pb-8 border-b border-b-[#F0F0F0]">
               <img
                 className="h-10 w-10 rounded-full"
@@ -64,9 +57,9 @@ const ContactUs = () => {
                 alt=""
               />
               <div>
-                <p className="text-base font-normal">Ile-Oti Support</p>
+                <p className="text-base font-normal">John Smith Jagger</p>
                 <p className="text-xs text-[#9B9B9B] font-normal">
-                  support@ileoti.com
+                  Jsmith.jaggger@gmail.com
                 </p>
               </div>
             </div>
@@ -134,8 +127,8 @@ const ContactUs = () => {
               />
             </div>
           </div>
-          <div className="hidden lg:block lg:w-1/2">
-            <img src={ImagesAndIcons.FooterImage} alt="" className="w-full h-full object-cover rounded-2xl" />
+          <div className="w-1/2">
+            <img src={ImagesAndIcons.FooterImage} alt="" />
           </div>
         </div>
       </div>

@@ -19,12 +19,10 @@ import {
   isExploreSlug,
   resolveExploreCategoryId,
 } from "../../shared/exploreRoutes";
-import { usePageTitle } from "../../lib/use-page-title";
 
 const DEFAULT_CATEGORY_TABS = ["Cognac", "Gin", "Pineau", "Whiskey"];
 
 const Products = () => {
-  usePageTitle("Products");
   const { slug } = useParams<{ slug?: string }>();
   const navigate = useNavigate();
   const explore = slug && isExploreSlug(slug) ? getExploreConfig(slug) : undefined;

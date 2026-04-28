@@ -15,7 +15,6 @@ import { useQuery } from "@tanstack/react-query";
 import { productService } from "../../services/product.service";
 import { Link, useNavigate } from "react-router-dom";
 import { routes } from "../../shared/routes/routes";
-import { usePageTitle } from "../../lib/use-page-title";
 
 const CATEGORY_FALLBACKS = [
   ImagesAndIcons.organicSpiritImage,
@@ -28,7 +27,6 @@ const CATEGORY_FALLBACKS = [
 ];
 
 const Home = () => {
-  usePageTitle();
   const navigate = useNavigate();
 
   const {

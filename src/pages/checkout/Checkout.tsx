@@ -15,7 +15,6 @@ import { orderService } from "../../services/order.service";
 import { effectivePrice, formatNGN, primaryImage } from "../../lib/format";
 import { message } from "antd";
 import type { Address, CartItem } from "../../types";
-import { usePageTitle } from "../../lib/use-page-title";
 
 type CheckoutStep = "delivery" | "payment";
 
@@ -106,7 +105,6 @@ function SummaryRows({
 }
 
 const Checkout = () => {
-  usePageTitle("Checkout");
   const isAuthenticated = useAuthStore((s) => Boolean(s.accessToken));
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -365,7 +363,6 @@ const Checkout = () => {
                   label={payMutation.isPending ? "Redirecting…" : "Make payment"}
                   className="lg:py-6 text-base lg:text-xl py-3 font-semibold rounded-[55px] mt-4"
                   handleClick={() => payMutation.mutate()}
-                  disabled={payMutation.isPending}
                 />
               </>
             )}

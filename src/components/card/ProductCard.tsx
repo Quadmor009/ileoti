@@ -76,7 +76,6 @@ const ProductCard = ({ product }: ProductCardProps) => {
     onSuccess: (cart, nextQuantity) => {
       setCart(cart);
       setQuantity(nextQuantity);
-      qc.setQueryData(['cart'], cart);
     },
     onError: (e) => {
       void message.error(getApiErrorMessage(e));
@@ -131,7 +130,6 @@ const ProductCard = ({ product }: ProductCardProps) => {
           const cart = await cartService.removeFromCart(id);
           setCart(cart);
           setQuantity(0);
-          qc.setQueryData(['cart'], cart);
         } catch {
           void message.error('Could not remove from cart');
         }
@@ -175,8 +173,6 @@ const ProductCard = ({ product }: ProductCardProps) => {
       <div className="relative w-full aspect-[246/306] shrink-0 mb-3 rounded-2xl overflow-hidden bg-[#f5f5f5]">
         {hasImage ? (
           <div
-            role="img"
-            aria-label={name}
             style={{
               backgroundImage: `url(${image})`,
               backgroundSize: "cover",

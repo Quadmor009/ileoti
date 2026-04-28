@@ -9,7 +9,6 @@ import { useQuery } from "@tanstack/react-query";
 import { orderService } from "../../../services/order.service";
 import { useAuthStore } from "../../../store/auth.store";
 import type { Order } from "../../../types";
-import { usePageTitle } from "../../../lib/use-page-title";
 
 const ACTIVE_STATUSES = new Set([
   "SUBMITTED", "CONFIRMED", "AWAITING_PAYMENT", "PAID",
@@ -17,7 +16,6 @@ const ACTIVE_STATUSES = new Set([
 ]);
 
 export default function Orders() {
-  usePageTitle("Your Orders");
   const [activeTab, setActiveTab] = useState("Active");
   const isAuthenticated = useAuthStore((s) => Boolean(s.accessToken));
 
@@ -25,7 +23,6 @@ export default function Orders() {
     queryKey: ["orders"],
     queryFn: () => orderService.listOrders(1, 100),
     enabled: isAuthenticated,
-    refetchInterval: 30_000,
   });
 
   const allOrders: Order[] = data?.data ?? [];
@@ -65,11 +62,11 @@ export default function Orders() {
           <OrderActive orders={allOrders} isLoading={isLoading} />
         )}
 
-        <div className="text-sm border-[#DEDEDE] border-t pt-5 text-[#585858] mt-10 flex flex-wrap gap-x-4 gap-y-1">
-          <span title="Coming soon" className="cursor-default opacity-60">Refund Policy</span>
-          <span title="Coming soon" className="cursor-default opacity-60">Shipping Policy</span>
-          <span title="Coming soon" className="cursor-default opacity-60">Privacy Policy</span>
-          <span title="Coming soon" className="cursor-default opacity-60">Terms of Service</span>
+        <div className="text-sm border-[#DEDEDE] border-t pt-5 text-primary mt-10 space-x-4">
+          <a href="#">Refund Policy</a>
+          <a href="#">Shipping Policy</a>
+          <a href="#">Privacy Policy</a>
+          <a href="#">Terms of Service</a>
         </div>
       </div>
       <Footer />

@@ -2,10 +2,8 @@ import { Link } from "react-router-dom";
 import Footer from "../../components/footer/Footer";
 import Navbar from "../../components/navbar/Navbar";
 import { routes } from "../../shared/routes/routes";
-import { usePageTitle } from "../../lib/use-page-title";
 
 export default function About() {
-  usePageTitle("About");
   return (
     <section>
       <Navbar />

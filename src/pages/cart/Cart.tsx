@@ -16,10 +16,8 @@ import { effectivePrice, formatNGN, primaryImage } from "../../lib/format";
 import { getApiErrorMessage } from "../../lib/api-error";
 import { routes } from "../../shared/routes/routes";
 import { ImagesAndIcons } from "../../shared/images-icons/ImagesAndIcons";
-import { usePageTitle } from "../../lib/use-page-title";
 
 const Cart = () => {
-  usePageTitle("Cart");
   const isAuthenticated = useAuthStore((s) => Boolean(s.accessToken));
   const navigate = useNavigate();
   const qc = useQueryClient();

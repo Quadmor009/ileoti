@@ -123,7 +123,7 @@ const GetExclusiveAccessModal = ({
         open={open}
         onCancel={close}
         footer={null}
-        width="min(890px, 92vw)"
+        width={890}
         centered
         closable={false}
       >

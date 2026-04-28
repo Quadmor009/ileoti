@@ -22,7 +22,6 @@ import GiftBoxModal from "../../components/gift-box-modal/GiftboxModal";
 import PersonalMessageModal from "../../components/gift-box-modal/PersonalMessageModal";
 import { useLoginModalStore } from "../../store/login-modal.store";
 import { routes } from "../../shared/routes/routes";
-import { usePageTitle } from "../../lib/use-page-title";
 
 export default function ProductDetailsPage() {
   const navigate = useNavigate();
@@ -52,8 +51,6 @@ export default function ProductDetailsPage() {
     queryFn: () => productService.getProduct(id!),
     enabled: !!id,
   });
-
-  usePageTitle(product?.name);
 
   const { data: reviewsData } = useQuery({
     queryKey: ["reviews", id],
@@ -284,7 +281,7 @@ export default function ProductDetailsPage() {
                     onClick={() => navigate(`/products/${p.id}`)}
                   >
                     <img
-                      className="w-55 h-55 rounded-3xl object-cover"
+                      className="w-55 h-55 rounded-3xl"
                       src={primaryImage(p.images, ImagesAndIcons.furasgnBottle)}
                       alt={p.name}
                     />

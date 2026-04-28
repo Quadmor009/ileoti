@@ -8,8 +8,6 @@ import { OauthLogoSlot } from "../../components/auth/OauthLogoSlot";
 import { verifyOtp, initiateGoogleLogin } from "../../services/auth.service";
 import { getApiErrorMessage } from "../../lib/api-error";
 import { useLoginModalStore } from "../../store/login-modal.store";
-import { useCartStore } from "../../store/cart.store";
-import { cartService } from "../../services/cart.service";
 
 interface OtpLoginProps {
   isModalOpen: boolean;
@@ -36,14 +34,6 @@ const OtpLogin = ({ isModalOpen, handleCancel, email }: OtpLoginProps) => {
     setVerifyLoading(true);
     try {
       await verifyOtp(email, otp);
-      // Merge any guest cart items into the now-authenticated cart
-      const guestItems = useCartStore.getState().guestItems;
-      if (guestItems.length > 0) {
-        await Promise.allSettled(
-          guestItems.map((item) => cartService.addToCart(item.productId, item.quantity))
-        );
-        useCartStore.getState().clearGuestCart();
-      }
       void message.success("Signed in successfully.");
       const raw = useLoginModalStore.getState().postLoginRedirect;
       useLoginModalStore.getState().clearPostLoginRedirect();
@@ -124,7 +114,7 @@ const OtpLogin = ({ isModalOpen, handleCancel, email }: OtpLoginProps) => {
 
         <Button
           type="red"
-          label={verifyLoading ? "Verifying…" : "Verify"}
+          label={verifyLoading ? "Verifying…" : "Sign Up"}
           className="font-semibold  rounded-[55px] py-6 text-xl my-8"
           handleClick={() => void handleVerify()}
         />
